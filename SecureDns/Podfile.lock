@@ -1,0 +1,40 @@
+PODS:
+  - Alamofire (5.2.1)
+  - OpenSSL-Apple (1.1.1g.6)
+  - ReachabilitySwift (5.0.0)
+  - SwiftyBeaver (1.9.1)
+  - TunnelKit (2.2.7):
+    - TunnelKit/Protocols/OpenVPN (= 2.2.7)
+  - TunnelKit/AppExtension (2.2.7):
+    - SwiftyBeaver
+    - TunnelKit/Core
+  - TunnelKit/Core (2.2.7):
+    - SwiftyBeaver
+  - TunnelKit/Protocols/OpenVPN (2.2.7):
+    - OpenSSL-Apple (~> 1.1.1g.6)
+    - TunnelKit/AppExtension
+    - TunnelKit/Core
+
+DEPENDENCIES:
+  - Alamofire
+  - ReachabilitySwift
+  - TunnelKit
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - OpenSSL-Apple
+    - ReachabilitySwift
+    - SwiftyBeaver
+    - TunnelKit
+
+SPEC CHECKSUMS:
+  Alamofire: e911732990610fe89af59ac0077f923d72dc3dfd
+  OpenSSL-Apple: c9c1b9c5b2b1fc4e1758fc5f0836b58ae7fd8183
+  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
+  SwiftyBeaver: a1f5691458561414bcfab51874b2b7445451602b
+  TunnelKit: cbd063b8b6f4f6a182cf48e646ff35cb2365bf91
+
+PODFILE CHECKSUM: 185d602d8787f84de4d9002d0a6fd18a23f6f287
+
+COCOAPODS: 1.9.3
