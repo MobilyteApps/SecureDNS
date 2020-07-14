@@ -1,6 +1,6 @@
 //
 //  VPNKeychain.swift
-//  Secure DNS
+//  ADGAP
 //
 //  Created by Harsh Rajput on 04/06/20.
 //  Copyright © 2020 Harsh Rajput. All rights reserved.

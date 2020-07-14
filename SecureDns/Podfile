@@ -4,9 +4,10 @@
 target 'BasicTunnel-iOS' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
- pod 'TunnelKit'
+   pod 'TunnelKit'
    pod 'ReachabilitySwift'
    pod 'Alamofire'
+   pod 'SwiftyStoreKit'
 
   # Pods for BasicTunnel-iOS
 
@@ -16,8 +17,8 @@ end
 target 'BasicTunnelExtension-iOS' do
   # Comment the next line if you don't want to use dynamic frameworks
    pod 'TunnelKit'
-   pod 'ReachabilitySwift'
-   pod 'Alamofire'
+#   pod 'ReachabilitySwift'
+#   pod 'Alamofire'
 
 
   use_frameworks!

@@ -9,81 +9,78 @@
 import UIKit
 import NetworkExtension
 import TunnelKit
-import Reachability
-import NotificationCenter
-
-
-
 
 class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     @IBOutlet fileprivate var switchConntectionStatus: UISwitch!
     @IBOutlet fileprivate var lblConnection: UILabel!
     @IBOutlet fileprivate var buttonConnection: UIButton!
-    @IBOutlet fileprivate weak var labelDayleft: UILabel!
-    
+    @IBOutlet fileprivate var labelDayleft: UILabel!
     fileprivate var currentManager: NETunnelProviderManager?
-    fileprivate var status = NEVPNStatus.invalid
-    fileprivate var isConnected = false
+    fileprivate var status: NEVPNStatus = .invalid{
+        didSet{
+            switch status {
+            case  .connecting:
+                self.lblConnection.text = "Connecting..."
+                self.switchConntectionStatus.setOn(false, animated: true)
+                KConnected = false
+            case .connected:
+                self.lblConnection.text = "Connected"
+                self.switchConntectionStatus.setOn(true, animated: true)
+                KConnected = true
+            case .disconnected:
+                self.lblConnection.text = "Connect"//"Disconnected"
+                self.switchConntectionStatus.setOn(false, animated: true)
+            case .disconnecting:
+                self.lblConnection.text = "Disconnecting..."
+                self.switchConntectionStatus.setOn(false, animated: true)
+                
+            default:
+                break
+            }
+        }
+    }
+    //fileprivate var isConnected = false
+    fileprivate var viewModel:CBDSNViewModel{
+        return CBDSNViewModel.shared
+    }
     
     //MARK:- UIView LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         switchConntectionStatus.set(width: 130, height: 75)
         getPremiumValidity()
-        
-        NetworkReachability.shared.startNotifier()
         reachabilityObserver()
-        NotificationCenter.default.addObserver(self,selector: #selector(VPNStatusDidChange(notification:)),name: .NEVPNStatusDidChange,object: nil)
         reloadCurrentManager()
-        
+        NotificationCenter.default.addObserver(self,selector: #selector(VPNStatusDidChange(notification:)),name: .NEVPNStatusDidChange,object: nil)
         
     }
     
     //MARK:- Check Premium Validity
-    func getPremiumValidity(){
-        let udid = UIDevice.current.identifierForVendor?.uuidString ?? ""
-        let timeStemp = NSDate().timeIntervalSince1970.description
-        let params:[String:Any] = ["udid" : udid, "timestamp":timeStemp]
-        let UrlEndpoints = "http://poc.mobilytedev.com:8067/app/userdata/getRegistered"
-        ApiManager.shared.post(url: UrlEndpoints, params: params) { (res:Register?, err) in
-            if let error = err {
-                print("error in forgot password api :\(error)")
-            } else {
-                guard let resp = res else {return}
-                print("resp in create user api : \(resp)")
-                let v = "Premium features enabled:\n" + "\(resp.data?.daysLeft ?? 0)" + " days remaining"
-                self.labelDayleft.text = v
-                
-                
+    private func getPremiumValidity(){
+        viewModel.premiumValidate {
+            async {
+                self.labelDayleft.text = self.viewModel.tailValidTime
             }
         }
     }
-    //MARK:- reconnection
-    func reconnection(){
-        if let connection = UserDefaults.standard.value(forKey: "isConnected")as? Bool, connection == true{
-            self.connect()
-        }else{
-            self.disconnect()
-        }
-    }
+    
     //MARK:- reachabilityObserver
-    func reachabilityObserver() {
-        
-        NetworkReachability.shared.reachabilityObserver = { [weak self] status in
-            switch status {
-            case .connected:
+    private func reachabilityObserver() {
+        NetworkStatus.shared.startNotifier { status in
+            switch status{
+            case .reachable:
                 print("Reachability: Network available 😃")
-                DispatchQueue.main.async {
-                    self?.reconnection()
+                async {
+                    self.reconnection()
                 }
-                
-            case .disconnected:
+            case .notReachable:
                 print("Reachability: Network unavailable 😟")
-                UserDefaults.standard.set(true, forKey: "isConnected")
-                
-                
+                KConnected = false
+                self.reconnection()
+            default:break
             }
         }
+        
     }
     
     //MARK:- VPNStatusDidChange Observer
@@ -94,15 +91,14 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
         }
         print("VPNStatusDidChange: \(status.rawValue)")
         self.status = status
-        updateButton()
+        
     }
     //MARK:- connectionClicked
-    @IBAction func connectionClicked(_ sender: Any) {
+    @IBAction private func connectionClicked(_ sender: Any) {
         let block = {
             switch (self.status) {
             case .invalid, .disconnected:
                 self.connect()
-                
             case .connected, .connecting:
                 self.disconnect()
                 
@@ -121,62 +117,16 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
         }
     }
     
-    
-    
-    
-    //MARK:- updateButton Status
-    fileprivate func updateButton() {
-        switch status {
-        case  .connecting:
-            self.lblConnection.text = "Connecting..."
-            self.switchConntectionStatus.setOn(false, animated: true)
-            //self.switchConntectionStatus.isOn = false
-            //buttonConnection.setImage(#imageLiteral(resourceName: "grey-off"), for: .normal)
-            
-            self.isConnected = false
-            UserDefaults.standard.set(false, forKey: "isConnected")
-        case .connected:
-            self.lblConnection.text = "Connected"
-            //self.switchConntectionStatus.isOn = true
-            self.switchConntectionStatus.setOn(true, animated: true)
-            //buttonConnection.setImage(#imageLiteral(resourceName: "green"), for: .normal)
-            self.isConnected = true
-            UserDefaults.standard.set(true, forKey: "isConnected")
-            
-        case .disconnected:
-            
-            self.lblConnection.text = "Disconnected..."
-            //self.switchConntectionStatus.isOn = false
-            self.switchConntectionStatus.setOn(false, animated: true)
-            
-            //buttonConnection.setImage(#imageLiteral(resourceName: "grey-off"), for: .normal)
-            
-            self.isConnected = false
-            
-        case .disconnecting:
-            self.lblConnection.text = "Disconnecting..."
-            // self.switchConntectionStatus.isOn = false
-            self.switchConntectionStatus.setOn(false, animated: true)
-            
-            //buttonConnection.setImage(#imageLiteral(resourceName: "grey-off"), for: .normal)
-            
-            self.isConnected = false
-            
-        default:
-            break
-        }
-    }
-    
-    
-    
-    
-    
 }
 
-extension SecureDNSVC {
-    private static let appGroup = "group.com.infostride.VPNDemo"
-    private static let tunnelIdentifier = "com.infostride.VPNDemo.Extension"
+
+
+fileprivate extension SecureDNSVC{
     
+    private static let appGroup = "group.xyz.dnsbkv.adgap"
+    private static let tunnelIdentifier = "xyz.dnsbkv.adgap.networkExtension"
+    
+    //MARK:- make NETunnelProviderProtocol
     private func makeProtocol() -> NETunnelProviderProtocol {
         guard  let configurationFileURL = Bundle.main.url(forResource: "iosv1", withExtension: "ovpn") else{
             print("File not found")
@@ -199,10 +149,17 @@ extension SecureDNSVC {
         
         
     }
-}
-
-extension SecureDNSVC{
-    fileprivate func connect() {
+    //MARK:- reconnection
+    func reconnection(){
+        if KConnected{
+            self.connect()
+        }else{
+            self.disconnect()
+        }
+        
+    }
+    //MARK:- connect
+    func connect() {
         configureVPN({ (manager) in
             return self.makeProtocol()
         }, completionHandler: { (error) in
@@ -221,8 +178,8 @@ extension SecureDNSVC{
         })
     }
     
-    
-    fileprivate func disconnect() {
+    //MARK:- disconnect
+    func disconnect() {
         configureVPN({ (manager) in
             print(manager.description)
             return nil
@@ -231,11 +188,12 @@ extension SecureDNSVC{
                 print(err.localizedDescription)
             }
             self.currentManager?.connection.stopVPNTunnel()
-            self.isConnected = false
-            UserDefaults.standard.set(false, forKey: "isConnected")
+            KConnected = false
+            
         })
     }
-    fileprivate  func configureVPN(_ configure: @escaping (NETunnelProviderManager) -> NETunnelProviderProtocol?, completionHandler: @escaping (Error?) -> Void) {
+    //MARK:- configureVPN
+    func configureVPN(_ configure: @escaping (NETunnelProviderManager) -> NETunnelProviderProtocol?, completionHandler: @escaping (Error?) -> Void) {
         reloadCurrentManager { (error) in
             if let error = error {
                 print("error reloading preferences: \(error)")
@@ -260,8 +218,8 @@ extension SecureDNSVC{
             }
         }
     }
-    
-    fileprivate  func reloadCurrentManager(_ completionHandler: ((Error?) -> Void)? = nil) {
+    //MARK:- reloadCurrentManager
+    func reloadCurrentManager(_ completionHandler: ((Error?) -> Void)? = nil) {
         NETunnelProviderManager.loadAllFromPreferences { (managers, error) in
             if let error = error {
                 completionHandler?(error)
@@ -286,7 +244,6 @@ extension SecureDNSVC{
             
             self.currentManager = manager
             self.status = manager!.connection.status
-            self.updateButton()
             completionHandler?(nil)
         }
     }

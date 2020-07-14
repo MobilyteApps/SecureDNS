@@ -8,11 +8,11 @@
 	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.com.infostride.VPNDemo</string>
+		<string>group.xyz.dnsbkv.adgap</string>
 	</array>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)com.infostride.VPNDemo.AFSExtension</string>
+		<string>$(AppIdentifierPrefix)xyz.dnsbkv.adgap.networkExtension</string>
 	</array>
 </dict>
 </plist>
