@@ -116,7 +116,7 @@ extension  CBDSNViewModel{
         if isTrail {
             return "Get Premium features Free trail for:\n" + "\(daysLeft)" + " days remaining"
         }else{
-            return "Get full Access to Premium features.\n Purchase the Monthly subscription membership only for:"
+            return "Get unlimited access to Premium features, \n Please purchase the monthly subscription only in"
         }
         
     }
