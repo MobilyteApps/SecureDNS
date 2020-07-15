@@ -23,7 +23,7 @@ struct IAPProduct {
         return product.productIdentifier
     }
     var localizedPrice:String{
-        return "Subscription \(product.localizedPrice ?? "")/ \(self.localizedPeriodUnit)"
+        return "\(product.localizedPrice ?? "")/ \(self.localizedPeriodUnit)"
     }
     var localizedTitle:String{
         return product.localizedTitle

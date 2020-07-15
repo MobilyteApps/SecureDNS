@@ -92,6 +92,17 @@ extension UIViewController{
     func showAlertAction(title:String = kAppTitle,message:String?,cancelTitle:String = "Cancel",otherTitle:String = "OK",onCompletion:@escaping (_ didSelectIndex:Int)->Void){
         self.alertControl(title: title, message: message, cancelTitle: cancelTitle, otherTitle: otherTitle, onCompletion: onCompletion)
     }
+    /// `SFSafariViewController`Open Link on Safari App
+      func presentSafari(_ link:URL) {
+          if link.absoluteString.isValidateUrl {
+              let constroller = SFSafariViewController(url: link)
+              constroller.preferredControlTintColor = .blueColor3
+              self.present(constroller, animated: true, completion: nil)
+          }
+          
+      }
     
-    
+}
+public extension UIColor{
+    class var blueColor3:UIColor {return #colorLiteral(red: 0.1019607843, green: 0.1176470588, blue: 0.2392156863, alpha: 1)}
 }

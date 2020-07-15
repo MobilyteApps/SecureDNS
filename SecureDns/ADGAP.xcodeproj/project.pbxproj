@@ -14,6 +14,9 @@
 		0EB3A0011F7425140023AFFC /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EB3A0001F7425140023AFFC /* PacketTunnelProvider.swift */; };
 		0EB3A0051F7425140023AFFC /* BasicTunnelExtension-iOS.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 0EB39FFC1F7425140023AFFC /* BasicTunnelExtension-iOS.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		3320352EBF5A06E4B37C33FA /* Pods_BasicTunnelExtension_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B8A0B41553054A3DD6159599 /* Pods_BasicTunnelExtension_iOS.framework */; };
+		7D11300A24BF6A8600E7B704 /* UIButton+Ex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D11300924BF6A8600E7B704 /* UIButton+Ex.swift */; };
+		7D11300D24BF6D6A00E7B704 /* JKHyperLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D11300C24BF6D6A00E7B704 /* JKHyperLabel.swift */; };
+		7D11300F24BF6F3500E7B704 /* String+Ex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D11300E24BF6F3500E7B704 /* String+Ex.swift */; };
 		7D72D26024BE07DD00A20227 /* IAPProductType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D72D25C24BE07DD00A20227 /* IAPProductType.swift */; };
 		7D72D26124BE07DD00A20227 /* IAPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D72D25D24BE07DD00A20227 /* IAPManager.swift */; };
 		7D72D26224BE07DD00A20227 /* IAPVerifySubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D72D25E24BE07DD00A20227 /* IAPVerifySubscription.swift */; };
@@ -95,6 +98,9 @@
 		5CE3473307C8340633D440D6 /* Pods_BasicTunnel_macOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BasicTunnel_macOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F3DA4AA82294F28373D5917 /* Pods_BasicTunnel_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BasicTunnel_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		68BA0AFE36135BC90CFC8F35 /* Pods-BasicTunnelExtension-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BasicTunnelExtension-iOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BasicTunnelExtension-iOS/Pods-BasicTunnelExtension-iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		7D11300924BF6A8600E7B704 /* UIButton+Ex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Ex.swift"; sourceTree = "<group>"; };
+		7D11300C24BF6D6A00E7B704 /* JKHyperLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JKHyperLabel.swift; sourceTree = "<group>"; };
+		7D11300E24BF6F3500E7B704 /* String+Ex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Ex.swift"; sourceTree = "<group>"; };
 		7D72D25C24BE07DD00A20227 /* IAPProductType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPProductType.swift; sourceTree = "<group>"; };
 		7D72D25D24BE07DD00A20227 /* IAPManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
 		7D72D25E24BE07DD00A20227 /* IAPVerifySubscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPVerifySubscription.swift; sourceTree = "<group>"; };
@@ -223,6 +229,14 @@
 			name = "Supporting files";
 			sourceTree = "<group>";
 		};
+		7D11300B24BF6D6A00E7B704 /* JKHyperLabel */ = {
+			isa = PBXGroup;
+			children = (
+				7D11300C24BF6D6A00E7B704 /* JKHyperLabel.swift */,
+			);
+			path = JKHyperLabel;
+			sourceTree = "<group>";
+		};
 		7D72D25B24BE07DD00A20227 /* IAPManager */ = {
 			isa = PBXGroup;
 			children = (
@@ -237,6 +251,7 @@
 		7D72D26424BE081600A20227 /* Helper */ = {
 			isa = PBXGroup;
 			children = (
+				7D11300B24BF6D6A00E7B704 /* JKHyperLabel */,
 				7D72D28E24BE336300A20227 /* JKCardView */,
 				7D72D28B24BE335900A20227 /* JKProgressHUD */,
 				7D72D27E24BE0D8600A20227 /* VPNKeychain */,
@@ -275,6 +290,7 @@
 		7D72D27924BE086F00A20227 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				7D11300E24BF6F3500E7B704 /* String+Ex.swift */,
 				7D72D29324BE340E00A20227 /* Array+Ex.swift */,
 				7D72D29124BE33EB00A20227 /* DispatchQueue+Ex.swift */,
 				7D72D27F24BE155B00A20227 /* UIViewController+Ex.swift */,
@@ -282,6 +298,7 @@
 				7D72D28124BE166000A20227 /* UserDefaults+Ex.swift */,
 				7D72D27C24BE088F00A20227 /* UIAlertController+Ex.swift */,
 				7D72D27A24BE087D00A20227 /* Bundle+Ex.swift */,
+				7D11300924BF6A8600E7B704 /* UIButton+Ex.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -554,9 +571,9 @@
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${PODS_ROOT}/OpenSSL-Apple/frameworks/iPhone/openssl.framework",
 				"${BUILT_PRODUCTS_DIR}/ReachabilitySwift/Reachability.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftyBeaver/SwiftyBeaver.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyBeaver-iOS11.2/SwiftyBeaver.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyStoreKit/SwiftyStoreKit.framework",
-				"${BUILT_PRODUCTS_DIR}/TunnelKit/TunnelKit.framework",
+				"${BUILT_PRODUCTS_DIR}/TunnelKit-iOS11.2/TunnelKit.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -606,10 +623,12 @@
 				7D72D27524BE084C00A20227 /* CBServer.swift in Sources */,
 				7D72D29424BE340E00A20227 /* Array+Ex.swift in Sources */,
 				913C2B4E24B51E6D0051B6E0 /* RegisterModel.swift in Sources */,
+				7D11300A24BF6A8600E7B704 /* UIButton+Ex.swift in Sources */,
 				7D72D28624BE1A7E00A20227 /* CBResponse.swift in Sources */,
 				7D72D27724BE084C00A20227 /* CBEndpoint.swift in Sources */,
 				7D72D28224BE166000A20227 /* UserDefaults+Ex.swift in Sources */,
 				7D72D27124BE084C00A20227 /* SMError.swift in Sources */,
+				7D11300D24BF6D6A00E7B704 /* JKHyperLabel.swift in Sources */,
 				7D72D28D24BE335900A20227 /* JKProgressHUD.swift in Sources */,
 				7D72D26324BE07DD00A20227 /* IAPProduct.swift in Sources */,
 				913C2B4424B513FC0051B6E0 /* SecureDNSVC.swift in Sources */,
@@ -629,6 +648,7 @@
 				0EB39FE91F7424F80023AFFC /* AppDelegate.swift in Sources */,
 				913C2B5A24B51E910051B6E0 /* CBDSNViewModel.swift in Sources */,
 				7D72D28024BE155B00A20227 /* UIViewController+Ex.swift in Sources */,
+				7D11300F24BF6F3500E7B704 /* String+Ex.swift in Sources */,
 				913C2B5624B51E910051B6E0 /* VPNKeychain.swift in Sources */,
 				7D72D27B24BE087D00A20227 /* Bundle+Ex.swift in Sources */,
 			);

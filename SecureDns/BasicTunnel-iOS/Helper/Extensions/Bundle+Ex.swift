@@ -13,6 +13,7 @@ extension Bundle{
     static var kAppStoreReceiptURL:URL?{
        return bundle.appStoreReceiptURL
     }
+    
     static var kBundleURLTypes:[ [String: AnyObject] ] {
         guard let urlTypes = bundle.object(forInfoDictionaryKey:"CFBundleURLTypes") as? [ [String: AnyObject] ] else{ return []}
         return urlTypes

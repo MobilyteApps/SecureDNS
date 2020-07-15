@@ -16,6 +16,7 @@ enum IAPProductType:String,Hashable,Mappable {
     var identifier:String{
         return self.rawValue
     }
+     
    
     var subscriptionType:SubscriptionType{
         switch self {

@@ -42,7 +42,6 @@ class IAPManager : NSObject{
         guard NetworkStatus.shared.isConnected else {return}
         NetworkStatus.shared.showHud()
         verifySubscriptionResult = nil
-        
         self.retrieveProducts(productTypes) { result in
             async {
                 NetworkStatus.shared.hideHud()
@@ -97,13 +96,13 @@ class IAPManager : NSObject{
     
     //MARK:- verifyPurchase
     
-    func verifyPurchase(_ isLoader:Bool = true, service:IAPVerifyReceiptURLType = .production, product: IAPProduct, purchaseDetails:IAPPurchaseDetails?,completion:@escaping(Bool)->Void) {
+    func verifyPurchase(_ isLoader:Bool = true, product: IAPProduct, purchaseDetails:IAPPurchaseDetails?,completion:@escaping(Bool)->Void) {
         guard NetworkStatus.shared.isConnected, let productType = product.productType else {return}
         if isLoader {
             NetworkStatus.shared.showHud()
         }
         
-        verifyReceipt(service: service) { (result, receiptString) in
+        verifyReceipt{ (result, receiptString) in
             async {
                 NetworkStatus.shared.hideHud()
                 switch result {
@@ -148,7 +147,7 @@ class IAPManager : NSObject{
                     case .noReceiptData,.noRemoteData,.jsonDecodeError,.networkError:
                         if self.verifyErrorCount<1 {
                             self.verifyErrorCount += 1
-                            self.verifyPurchase(isLoader, service: service, product: product, purchaseDetails: purchaseDetails, completion: completion)
+                            self.verifyPurchase(isLoader,product: product, purchaseDetails: purchaseDetails, completion: completion)
                         }else{
                             alertMessage = error.errorMessage
                         }
@@ -251,7 +250,7 @@ extension IAPManager{
     }
     
     //MARK:- verifyReceipt
-    fileprivate func verifyReceipt(service:IAPVerifyReceiptURLType,completion: @escaping (IAPVerifyReceiptResult,_ receiptString:String) -> Void) {
+    fileprivate func verifyReceipt(completion: @escaping (IAPVerifyReceiptResult,_ receiptString:String) -> Void) {
         if let appStoreReceiptURL = Bundle.main.appStoreReceiptURL,
             FileManager.fileExists(atPath: appStoreReceiptURL.path) {
             do {

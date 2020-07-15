@@ -11,32 +11,43 @@ import NetworkExtension
 import TunnelKit
 
 class SecureDNSVC: UIViewController, URLSessionDataDelegate {
-    @IBOutlet fileprivate var switchConntectionStatus: UISwitch!
-    @IBOutlet fileprivate var lblConnection: UILabel!
-    @IBOutlet fileprivate var buttonConnection: UIButton!
-    @IBOutlet fileprivate var labelDayleft: UILabel!
+    @IBOutlet fileprivate var conntectionStatusSwitch: UISwitch!
+    @IBOutlet fileprivate var connectionStatuslbl: UILabel!
+    @IBOutlet fileprivate var connectionBtn: UIButton!
+    @IBOutlet fileprivate var leftTrailDayslbl: UILabel!
+    @IBOutlet fileprivate var upgradeBtn: UIButton!
+    @IBOutlet weak private var termPolicylbl: UILabel!
     fileprivate var currentManager: NETunnelProviderManager?
     fileprivate var status: NEVPNStatus = .invalid{
+        
         didSet{
+            var isOn:Bool = false
+            var statusText:String = "Connect"
             switch status {
             case  .connecting:
-                self.lblConnection.text = "Connecting..."
-                self.switchConntectionStatus.setOn(false, animated: true)
+                statusText = "Connecting..."
+                isOn = false
+                //self.conntectionStatusSwitch.setOn(false, animated: true)
                 KConnected = false
             case .connected:
-                self.lblConnection.text = "Connected"
-                self.switchConntectionStatus.setOn(true, animated: true)
+                statusText = "Connected"
+                //self.conntectionStatusSwitch.setOn(true, animated: true)
+                isOn = true
                 KConnected = true
             case .disconnected:
-                self.lblConnection.text = "Connect"//"Disconnected"
-                self.switchConntectionStatus.setOn(false, animated: true)
+                statusText = "Connect"//"Disconnected"
+                // self.conntectionStatusSwitch.setOn(false, animated: true)
+                isOn = false
             case .disconnecting:
-                self.lblConnection.text = "Disconnecting..."
-                self.switchConntectionStatus.setOn(false, animated: true)
+                statusText = "Disconnecting..."
+                // self.conntectionStatusSwitch.setOn(false, animated: true)
+                isOn = false
                 
             default:
                 break
             }
+            self.connectionStatuslbl.text = statusText
+            self.conntectionStatusSwitch.setOn(isOn, animated: true)
         }
     }
     //fileprivate var isConnected = false
@@ -47,25 +58,40 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     //MARK:- UIView LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        switchConntectionStatus.set(width: 130, height: 75)
+    
+        conntectionStatusSwitch.set(width: 130, height: 75)
         getPremiumValidity()
         reachabilityObserver()
         reloadCurrentManager()
-        NotificationCenter.default.addObserver(self,selector: #selector(VPNStatusDidChange(notification:)),name: .NEVPNStatusDidChange,object: nil)
-        
+        NotificationCenter.default.addObserver(self,selector: #selector(onDidChangeVPNStatus(notification:)),name: .NEVPNStatusDidChange,object: nil)
+        self.termAndPolicyConfig()
     }
     
     //MARK:- Check Premium Validity
     private func getPremiumValidity(){
         viewModel.premiumValidate {
             async {
-                self.labelDayleft.text = self.viewModel.tailValidTime
+                self.loadData()
+                self.viewModel.getIApProduct { success in
+                    async {
+                        self.loadData()
+                    }
+                }
             }
         }
     }
     
+    private func loadData(){
+        self.leftTrailDayslbl.text = self.viewModel.tailValidTime
+        self.upgradeBtn[title:.normal] = self.viewModel.productPrice
+        self.connectionBtn.isUserInteractionEnabled = self.viewModel.isActive
+        self.conntectionStatusSwitch.isUserInteractionEnabled = self.viewModel.isActive
+        reachabilityObserver()
+    }
+    
     //MARK:- reachabilityObserver
     private func reachabilityObserver() {
+        
         NetworkStatus.shared.startNotifier { status in
             switch status{
             case .reachable:
@@ -84,17 +110,21 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     }
     
     //MARK:- VPNStatusDidChange Observer
-    @objc private func VPNStatusDidChange(notification: NSNotification) {
-        guard let status = currentManager?.connection.status else {
+    @objc private func onDidChangeVPNStatus(notification: NSNotification) {
+        guard viewModel.isActive,let status = currentManager?.connection.status else {
             print("VPNStatusDidChange")
+            self.status = .disconnected
             return
         }
         print("VPNStatusDidChange: \(status.rawValue)")
         self.status = status
         
     }
-    //MARK:- connectionClicked
-    @IBAction private func connectionClicked(_ sender: Any) {
+    //MARK:- On Click VPN Connection
+    @IBAction private func onConnection(_ sender: Any) {
+        guard viewModel.isActive else {
+            return
+        }
         let block = {
             switch (self.status) {
             case .invalid, .disconnected:
@@ -116,11 +146,34 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
             block()
         }
     }
+     //MARK:- Upgrade Plan
+    @IBAction func onBuy(_ sender: Any) {
+        viewModel.buy {
+            
+        }
+    }
     
 }
 
 
-
+fileprivate extension SecureDNSVC{
+    //MARK:- termAndPolicyConfig
+    private func termAndPolicyConfig(){
+        guard let text = termPolicylbl.text,!text.isEmpty else{return}
+             termPolicylbl.setLinkFor("Privacy Policy","Terms of Service") { (label, string) in
+            async {
+                print("user tapped on \(string) text")
+                if string == "Privacy Policy" {
+                    self.presentSafari(URL(string:"https://www.websitepolicies.com/policies/view/hGbW4U3q")!)
+                }else if string == "Terms of Service"{
+                    self.presentSafari(URL(string:"https://www.websitepolicies.com/policies/view/djqN4SDa")!)
+                }
+                
+            }
+        }
+        
+    }
+}
 fileprivate extension SecureDNSVC{
     
     private static let appGroup = "group.xyz.dnsbkv.adgap"
@@ -151,7 +204,7 @@ fileprivate extension SecureDNSVC{
     }
     //MARK:- reconnection
     func reconnection(){
-        if KConnected{
+        if viewModel.isActive,KConnected{
             self.connect()
         }else{
             self.disconnect()

@@ -9,25 +9,15 @@
 import Foundation
 
 
-struct Register:Codable{
-    let success:Bool?
-    let data:RegisterResult?
-    
-}
-
-struct RegisterResult:Codable {
-    
-    let daysLeft:Int?
-    let message:String?
-    let statuscode:Int?
-    let userType:String?
+struct CBRegister:Mappable{
+ 
+    var daysLeft:Int?
+    var userType:String?
     
     enum CodingKeys: String, CodingKey {
-        
         case daysLeft  = "daysLeft"
-        case statuscode = "status code"
         case userType    = "userType"
-        case message = "message"
+     
         
     }
     
@@ -36,8 +26,6 @@ struct RegisterResult:Codable {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         daysLeft = try values.decodeIfPresent(Int.self, forKey: .daysLeft)
-        message =   try values.decodeIfPresent(String.self, forKey: .message)
-        statuscode = try values.decodeIfPresent(Int.self, forKey: .statuscode)
         userType =   try values.decodeIfPresent(String.self, forKey: .userType)
         
     }
