@@ -52,8 +52,10 @@ extension NSMutableAttributedString {
 extension UILabel{
     
     func setLinkFor(_ subStrings:String...,linkAttributed:[NSAttributedString.Key:Any]?  = nil,completion:@escaping(UILabel, String)->Void){
-        let font = UIFont.systemFont(ofSize: self.font!.pointSize, weight: .semibold)
+        
+        let font = UIFont.systemFont(ofSize: self.font!.pointSize+2, weight: .semibold)
         let underlineColor:UIColor = self.textColor
+        
         if let attributedText = self.attributedText {
             let attributedString = NSMutableAttributedString(attributedString: attributedText)
             
@@ -82,7 +84,7 @@ extension UILabel{
         self.onClick {gesture in
             guard let text = self.text else { return }
             for string in subStrings {
-                let rRange = ( text as NSString).range(of: string)
+                let rRange = (text as NSString).range(of: string)
                 if gesture.didTapAttributedTextInLabel(label: self, inRange: rRange) {
                     
                     completion(self,string)

@@ -43,6 +43,9 @@
 		7D72D29224BE33EB00A20227 /* DispatchQueue+Ex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D72D29124BE33EB00A20227 /* DispatchQueue+Ex.swift */; };
 		7D72D29424BE340E00A20227 /* Array+Ex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D72D29324BE340E00A20227 /* Array+Ex.swift */; };
 		7D96FD5B24AA8173006F9720 /* testkey.ovpn in Resources */ = {isa = PBXBuildFile; fileRef = 7D96FD5A24AA8173006F9720 /* testkey.ovpn */; };
+		7D99742424C0B98900D45A6C /* PaymentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D99742324C0B98800D45A6C /* PaymentVC.swift */; };
+		7D99742724C0DC4100D45A6C /* CBActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D99742624C0DC4100D45A6C /* CBActivity.swift */; };
+		7D99742A24C0DC7A00D45A6C /* CBMailComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D99742924C0DC7A00D45A6C /* CBMailComposer.swift */; };
 		7DA19A6724B4D57C00382411 /* iosv1.ovpn in Resources */ = {isa = PBXBuildFile; fileRef = 7DA19A6624B4D57C00382411 /* iosv1.ovpn */; };
 		913C2B4424B513FC0051B6E0 /* SecureDNSVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913C2B4324B513FC0051B6E0 /* SecureDNSVC.swift */; };
 		913C2B4E24B51E6D0051B6E0 /* RegisterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913C2B4D24B51E6D0051B6E0 /* RegisterModel.swift */; };
@@ -127,6 +130,9 @@
 		7D72D29124BE33EB00A20227 /* DispatchQueue+Ex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Ex.swift"; sourceTree = "<group>"; };
 		7D72D29324BE340E00A20227 /* Array+Ex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Ex.swift"; sourceTree = "<group>"; };
 		7D96FD5A24AA8173006F9720 /* testkey.ovpn */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testkey.ovpn; sourceTree = "<group>"; };
+		7D99742324C0B98800D45A6C /* PaymentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentVC.swift; sourceTree = "<group>"; };
+		7D99742624C0DC4100D45A6C /* CBActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBActivity.swift; sourceTree = "<group>"; };
+		7D99742924C0DC7A00D45A6C /* CBMailComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMailComposer.swift; sourceTree = "<group>"; };
 		7DA19A6624B4D57C00382411 /* iosv1.ovpn */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = iosv1.ovpn; sourceTree = "<group>"; };
 		913C2B4324B513FC0051B6E0 /* SecureDNSVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureDNSVC.swift; sourceTree = "<group>"; };
 		913C2B4824B518150051B6E0 /* Reachability.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Reachability.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -251,6 +257,8 @@
 		7D72D26424BE081600A20227 /* Helper */ = {
 			isa = PBXGroup;
 			children = (
+				7D99742824C0DC7100D45A6C /* CBMailComposer */,
+				7D99742524C0DC3600D45A6C /* CBActivity */,
 				7D11300B24BF6D6A00E7B704 /* JKHyperLabel */,
 				7D72D28E24BE336300A20227 /* JKCardView */,
 				7D72D28B24BE335900A20227 /* JKProgressHUD */,
@@ -341,6 +349,7 @@
 			isa = PBXGroup;
 			children = (
 				913C2B4324B513FC0051B6E0 /* SecureDNSVC.swift */,
+				7D99742324C0B98800D45A6C /* PaymentVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -361,6 +370,22 @@
 				913C2B4C24B51E6D0051B6E0 /* Model */,
 			);
 			path = Architecture;
+			sourceTree = "<group>";
+		};
+		7D99742524C0DC3600D45A6C /* CBActivity */ = {
+			isa = PBXGroup;
+			children = (
+				7D99742624C0DC4100D45A6C /* CBActivity.swift */,
+			);
+			path = CBActivity;
+			sourceTree = "<group>";
+		};
+		7D99742824C0DC7100D45A6C /* CBMailComposer */ = {
+			isa = PBXGroup;
+			children = (
+				7D99742924C0DC7A00D45A6C /* CBMailComposer.swift */,
+			);
+			path = CBMailComposer;
 			sourceTree = "<group>";
 		};
 		913C2B4C24B51E6D0051B6E0 /* Model */ = {
@@ -630,11 +655,14 @@
 				7D72D27124BE084C00A20227 /* SMError.swift in Sources */,
 				7D11300D24BF6D6A00E7B704 /* JKHyperLabel.swift in Sources */,
 				7D72D28D24BE335900A20227 /* JKProgressHUD.swift in Sources */,
+				7D99742724C0DC4100D45A6C /* CBActivity.swift in Sources */,
 				7D72D26324BE07DD00A20227 /* IAPProduct.swift in Sources */,
 				913C2B4424B513FC0051B6E0 /* SecureDNSVC.swift in Sources */,
 				7D72D27824BE084C00A20227 /* HTTPStatusCode.swift in Sources */,
 				7D72D27324BE084C00A20227 /* CBSessionConfig.swift in Sources */,
 				7D72D27224BE084C00A20227 /* CBConstant.swift in Sources */,
+				7D99742424C0B98900D45A6C /* PaymentVC.swift in Sources */,
+				7D99742A24C0DC7A00D45A6C /* CBMailComposer.swift in Sources */,
 				7D72D28424BE176400A20227 /* Date+Ex.swift in Sources */,
 				7D72D29024BE336300A20227 /* JKCardView.swift in Sources */,
 				7D72D27D24BE088F00A20227 /* UIAlertController+Ex.swift in Sources */,

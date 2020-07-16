@@ -46,14 +46,14 @@ extension UIViewController{
     fileprivate func alertControl(title:String = kAppTitle,message:String?,cancelTitle:String = "OK",otherTitle:String?,onCompletion:((_ didSelectIndex:Int)->Swift.Void)? = nil){
         
         let msge  = (message != nil && !message!.isEmpty) ? "\n\(message!)" : nil
-        let alertModel = AlertControllerModel(contentViewController: nil, title: title, message: msge)
+        let alertModel = AlertControllerModel(contentViewController: nil, title: title,message: msge, titleFont: UIFont.systemFont(ofSize: 17, weight: .semibold),messageFont: UIFont.systemFont(ofSize: 15, weight: .regular))
         var actions:[AlertActionModel] = [AlertActionModel]()
         
-        let alertActionTitle = AlertActionModel.Title(title: cancelTitle)
+        let alertActionTitle = AlertActionModel.Title(title: cancelTitle,titleColor: .systemBlue)
         let cancel = AlertActionModel( actionTitle: alertActionTitle, style: .cancel)
         actions.append(cancel)
         if let otherTitle = otherTitle {
-            let alertActionTitle = AlertActionModel.Title(title: otherTitle)
+            let alertActionTitle = AlertActionModel.Title(title: otherTitle,titleColor: .systemBlue)
             let other = AlertActionModel(actionTitle:alertActionTitle, style: .default)
             actions.append(other)
         }

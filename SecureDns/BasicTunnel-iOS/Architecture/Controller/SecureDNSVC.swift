@@ -16,7 +16,6 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     @IBOutlet fileprivate var connectionBtn: UIButton!
     @IBOutlet fileprivate var leftTrailDayslbl: UILabel!
     @IBOutlet fileprivate var upgradeBtn: UIButton!
-    @IBOutlet weak private var termPolicylbl: UILabel!
     fileprivate var currentManager: NETunnelProviderManager?
     fileprivate var status: NEVPNStatus = .invalid{
         
@@ -58,13 +57,13 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     //MARK:- UIView LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        
         conntectionStatusSwitch.set(width: 130, height: 75)
         getPremiumValidity()
         reachabilityObserver()
         reloadCurrentManager()
         NotificationCenter.default.addObserver(self,selector: #selector(onDidChangeVPNStatus(notification:)),name: .NEVPNStatusDidChange,object: nil)
-        self.termAndPolicyConfig()
+        
     }
     
     //MARK:- Check Premium Validity
@@ -72,20 +71,14 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
         viewModel.premiumValidate {
             async {
                 self.loadData()
-                self.viewModel.getIApProduct { success in
-                    async {
-                        self.loadData()
-                    }
-                }
+                
             }
         }
     }
     
     private func loadData(){
         self.leftTrailDayslbl.text = self.viewModel.tailValidTime
-        self.upgradeBtn[title:.normal] = self.viewModel.productPrice
         self.connectionBtn.isUserInteractionEnabled = self.viewModel.isActive
-        self.conntectionStatusSwitch.isUserInteractionEnabled = self.viewModel.isActive
         reachabilityObserver()
     }
     
@@ -146,34 +139,46 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
             block()
         }
     }
-     //MARK:- Upgrade Plan
-    @IBAction func onBuy(_ sender: Any) {
-        viewModel.buy {
-            
+    
+    @IBAction func onShare(_ sender: UIButton) {
+        
+        guard let url = URL(string: "https://apps.apple.com/us/app/ADGAP/id1523477415?ls=1&mt=8")  else {return}
+        let objectsToShare:[Any] = ["Adgap Protects your phone from ads and malware websites. Protect what matters!",url]
+        let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: [])
+        self.present(activityVC, animated: true, completion: nil)
+        
+    }
+    @IBAction func onReport(_ sender: UIButton) {
+        
+        self.showAlertAction(title: "Report bugs", message: "do you want to Report bugs of current verion \(kAppTitle) application.", cancelTitle: "NO", otherTitle: "YES") { index in
+            if index == 2{
+                let subject:String = (!Bundle.kAppTitle.isEmpty && !Bundle.kAppVersionString.isEmpty && !Bundle.kBuildNumber.isEmpty) ? "Report bugs for \(Bundle.kAppTitle), version:\(Bundle.kAppVersionString),Build:\(Bundle.kBuildNumber)" :"Report bugs "
+                CBMailComposer.shared.setBccRecipients(["Adgap@gmail.com"])
+                    .setSubject(subject)
+                    .setMessageBody("<p>This is message text.</p>", isHTML: true)
+                    .showMail(self) { result in
+                        async {
+                            switch result{
+                            case .success(let vl):
+                                switch vl {
+                                case .sent:
+                                    alertMessage = "Mail successfully sent"
+                                default:break
+                                }
+                            case .failure(let err):
+                                alertMessage = "Mail sent failure: \(err.localizedDescription)"
+                            }
+                        }
+                }
+                
+            }
         }
     }
     
 }
 
 
-fileprivate extension SecureDNSVC{
-    //MARK:- termAndPolicyConfig
-    private func termAndPolicyConfig(){
-        guard let text = termPolicylbl.text,!text.isEmpty else{return}
-             termPolicylbl.setLinkFor("Privacy Policy","Terms of Service") { (label, string) in
-            async {
-                print("user tapped on \(string) text")
-                if string == "Privacy Policy" {
-                    self.presentSafari(URL(string:"https://www.websitepolicies.com/policies/view/hGbW4U3q")!)
-                }else if string == "Terms of Service"{
-                    self.presentSafari(URL(string:"https://www.websitepolicies.com/policies/view/djqN4SDa")!)
-                }
-                
-            }
-        }
-        
-    }
-}
+
 fileprivate extension SecureDNSVC{
     
     private static let appGroup = "group.xyz.dnsbkv.adgap"

@@ -16,8 +16,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="appLogo" translatesAutoresizingMaskIntoConstraints="NO" id="I0J-JW-Fg7">
-                                <rect key="frame" x="113.5" y="385.5" width="187" height="125"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="appLogo" translatesAutoresizingMaskIntoConstraints="NO" id="I0J-JW-Fg7">
+                                <rect key="frame" x="87" y="368" width="240" height="160"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="I0J-JW-Fg7" secondAttribute="height" multiplier="9:6" id="yuE-Lk-2qw"/>
                                 </constraints>
@@ -37,6 +37,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="appLogo" width="187" height="60"/>
+        <image name="appLogo" width="200" height="160"/>
     </resources>
 </document>

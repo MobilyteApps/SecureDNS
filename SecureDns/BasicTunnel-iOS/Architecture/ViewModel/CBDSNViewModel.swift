@@ -59,14 +59,7 @@ class CBDSNViewModel:NSObject{
         iApManager.getProducts([.monthly]) {
             async {
                 self.iapProduct = IAPManager.shared.count>0 ? IAPManager.shared[at: 0] : nil
-                if !self.isTrail {
-                    guard let product = self.iapProduct else{return}
-                        self.verifyReceipt(true,product: product, purchaseDetails: nil,completion: completion)
-                }else{
-                    completion(true)
-                }
-              
-                
+                 completion(true)
             }
         }
     }
@@ -95,6 +88,9 @@ class CBDSNViewModel:NSObject{
     
 }
 extension  CBDSNViewModel{
+    var isApProduct:Bool{
+        return self.iapProduct != nil
+    }
     private var daysLeft:Int{
         guard let vl = register, let days = vl.daysLeft else { return 0 }
         return days
@@ -116,7 +112,7 @@ extension  CBDSNViewModel{
         if isTrail {
             return "Get Premium features Free trail for:\n" + "\(daysLeft)" + " days remaining"
         }else{
-            return "Get unlimited access to Premium features, \n Please purchase the monthly subscription only in"
+            return "Get unlimited access to Premium features, \n Please buy the monthly subscription."
         }
         
     }
@@ -128,7 +124,7 @@ extension  CBDSNViewModel{
         return iapProduct?.localizedDescription ?? ""
     }
     var productPrice:String{
-        return iapProduct?.localizedPrice.uppercased() ?? "$2.99 / Month"
+        return iapProduct?.localizedPrice ?? "$2.99/ month"
     }
 }
 struct ErrorMessages {

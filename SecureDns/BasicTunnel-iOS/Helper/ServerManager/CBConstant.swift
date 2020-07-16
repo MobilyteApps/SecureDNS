@@ -110,7 +110,7 @@ var alertMessage: String? {
             guard let controller  =  currentAlert else {return}
             
             if let alertController = controller as? UIAlertController{
-                let messageFont  =  UIFont.systemFont(ofSize: 17)
+                let messageFont  =  UIFont.systemFont(ofSize: 15, weight: .regular)
                 alertController.set(message: alertMessage, font: messageFont, color: .white)
             }else{
                 controller.showAlert(message: alertMessage)
@@ -162,7 +162,18 @@ func resetPref(){
 }
 
 
-
+struct Platform {
+    static let isSimulator: Bool = {
+        var isSim = false
+        #if arch(i386) || arch(x86_64)
+        isSim = true
+        #endif
+        return isSim
+    }()
+    static var isPhone:Bool {
+        return UIDevice.current.userInterfaceIdiom == .phone ? true :false
+    }
+}
 
 var kAppImage:UIImage?          {get{ return Bundle.kAppIcon }}
 var kAppTitle :String           {get{return Bundle.kAppTitle}}
