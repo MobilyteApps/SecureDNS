@@ -9,7 +9,7 @@
 import Foundation
 import Alamofire
 
-private let kServerType = ServerType.dev
+private let kServerType = ServerType.live
 
 
 enum CBEndpoint {
@@ -38,7 +38,7 @@ enum CBEndpoint {
         var url:String {
             switch self {
             case .singUp:
-                return "\(kServerType.path)/userdata/\(self.rawValue)"
+                return "\(kServerType.path)/\(self.rawValue)"
            
             }
         }
@@ -46,11 +46,13 @@ enum CBEndpoint {
     }
     enum Subscription{
         case receiptVerify
+        case buySubscription
         var url:String {
             switch self {
             case .receiptVerify:
                 return "\(kServerType.path)/subscription/validate"
-                
+            case .buySubscription:
+                return "\(kServerType.path)/buySubscription"
                 
             }
         }
@@ -62,9 +64,8 @@ enum CBEndpoint {
 
 enum ServerType:String{
     case dev = "http://poc.mobilytedev.com:8067"
-    case live = "http://161.35.195.27"//"http://3.128.4.122:3000"
+    case live = "http://161.35.195.27:3000"
     var path:String{
-        
         return "\(self.rawValue)/app"
     }
     

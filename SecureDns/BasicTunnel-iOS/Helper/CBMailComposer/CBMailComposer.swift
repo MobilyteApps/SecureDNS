@@ -64,7 +64,7 @@ class CBMailComposer: NSObject {
         if MFMailComposeViewController.canSendMail() {
             controller.present(mailController, animated:true, completion: nil)
         }else{
-            alertMessage =  "Please configure email account first."
+           // alertMessage =  "Please configure email account first."
         }
     }
     

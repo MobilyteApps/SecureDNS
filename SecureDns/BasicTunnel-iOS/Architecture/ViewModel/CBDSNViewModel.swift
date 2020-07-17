@@ -8,9 +8,6 @@
 
 import UIKit
 
-
-
-
 class CBDSNViewModel:NSObject{
     
     fileprivate var register:CBRegister?
@@ -23,11 +20,11 @@ class CBDSNViewModel:NSObject{
     }
     
     //MARK:- premiumValidate
-    func premiumValidate(completion:@escaping()->Void){
+    func register(completion:@escaping()->Void){
         
         if kTrailData  == nil{
             let udid = UIDevice.current.identifierForVendor?.uuidString ?? ""
-            kTrailData = .init(uuidString: udid, timestamp: Date().timeIntervalSince1970)
+            kTrailData = .init(uuidString: udid, timestamp: Date().millisecondsSince1970)
         }
         guard NetworkStatus.shared.isConnected , let params = kTrailData?.jsonObject else{return}
         NetworkStatus.shared.showHud()
@@ -59,47 +56,83 @@ class CBDSNViewModel:NSObject{
         iApManager.getProducts([.monthly]) {
             async {
                 self.iapProduct = IAPManager.shared.count>0 ? IAPManager.shared[at: 0] : nil
-                 completion(true)
+                completion(true)
             }
         }
     }
-    //Buy subscription
-    func buy(completion:@escaping()->Void){
+      //MARK:- purchase
+    func purchase(completion:@escaping(Bool)->Void){
         
         guard NetworkStatus.shared.isConnected,let product = self.iapProduct  else{return}
         self.iApManager.verifySubscriptionResult = nil
         self.iApManager.purchase(.product(product.product)) { detail in
             let recieptHandler  = { (success:Bool) in
                 async {
-                    NetworkStatus.shared.hideHud()
-                    
+                    //NetworkStatus.shared.hideHud()
                     if success, let p = self.iApManager.verifySubscriptionResult, p.isActive == true{
-                        
+                        self.subscribe(product: p, completion: completion)
                     }
                 }
             }
             self.verifyReceipt(product: product, purchaseDetails: detail, completion: recieptHandler)
         }
     }
+    //MARK:- verifyReceipt
     func verifyReceipt(_ isLoader:Bool = true,product:IAPProduct,purchaseDetails:IAPPurchaseDetails?,completion:@escaping(Bool)->Void){
         self.iApManager.verifyPurchase(isLoader, product: product, purchaseDetails: purchaseDetails, completion: completion)
         
     }
+    //MARK:- Buy Subscriber
+    func subscribe(product:IAPVerifySubscription,completion:@escaping(Bool)->Void){
+        guard NetworkStatus.shared.isConnected,let parameters  = product.parameters else {
+            NetworkStatus.shared.hideHud()
+            return
+        }
+        let handler  = {(_ result:Result<Data,Error>) in
+            async {
+                NetworkStatus.shared.hideHud()
+                switch result {
+                case .success(let data):
+                    let parser = data.JKDecoder(CBResponse<CBRegister>.self)
+                    switch parser {
+                    case .success(let res):
+                        if res.isSuccess {
+                            if let subscription  = res.data {
+                                self.register = subscription
+                                completion(true)
+                            }
+                            
+                        }else{
+                            completion(false)
+                        }
+                        
+                    case .failure(let error):
+                        alertMessage = error.localizedDescription
+                        completion(false)
+                    }
+                case .failure(let error):
+                    alertMessage = error.localizedDescription
+                    completion(false)
+                }
+            }
+        }
+        
+        CBServer.shared.dataTask(.default, endpoint: CBEndpoint.subscription(.buySubscription), method: .post, parameters: parameters, encoding: .JSON, headers: nil, completion: handler)
+        
+    }
+    
     
 }
-extension  CBDSNViewModel{
+extension CBDSNViewModel{
     var isApProduct:Bool{
         return self.iapProduct != nil
     }
-    private var daysLeft:Int{
-        guard let vl = register, let days = vl.daysLeft else { return 0 }
-        return days
-    }
-    private var isTrail:Bool{
-        return daysLeft>0
+    private var isValidService:Bool{
+        guard let vl = register else { return false}
+        return vl.isValidService
     }
     var isActive:Bool{
-        if isTrail {
+        if isValidService {
             return true
         }else if self.iApManager.verifySubscriptionResult?.isActive == true{
             return true
@@ -108,14 +141,14 @@ extension  CBDSNViewModel{
         }
         
     }
-    var tailValidTime:String{
-        if isTrail {
-            return "Get Premium features Free trail for:\n" + "\(daysLeft)" + " days remaining"
-        }else{
-            return "Get unlimited access to Premium features, \n Please buy the monthly subscription."
-        }
-        
-    }
+    var alertString:String{
+         guard let vl = register else { return "Get unlimited access to Premium features, \n Please buy the monthly subscription."}
+        if vl.isTrail {
+            return "Get Premium features Free trail for:\n" + "\(vl.daysLeft)" + " days remaining"
+           }else{
+               return "Get unlimited access to Premium features, \n Please buy the monthly subscription."
+           }
+       }
     var productTitle:String{
         return iapProduct?.localizedTitle ?? ""
         
@@ -126,11 +159,4 @@ extension  CBDSNViewModel{
     var productPrice:String{
         return iapProduct?.localizedPrice ?? "$2.99/ month"
     }
-}
-struct ErrorMessages {
-    static let serverError = "We're having trouble with our server.\nPlease check back after some time."
-    static let commonError = "Something went wrong.\nPlease check back after some time."
-    static let no_data = "no_data"
-    static let no_tags = "no_tags"
-    static let no_internet = "You are not connected to the internet."
 }

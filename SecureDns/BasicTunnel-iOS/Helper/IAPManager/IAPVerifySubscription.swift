@@ -33,6 +33,7 @@ struct IAPVerifySubscription {
             
         }
     }
+    
     var expiredDate:Date?{
         if let expireDate = purchasedRecieptData?.expiryDate {
             return expireDate
@@ -44,7 +45,15 @@ struct IAPVerifySubscription {
     }
     var expiredTimestamp:Int64?{
         guard let interval = expiredDate?.millisecondsSince1970 else { return nil }
-        return interval //Int64(interval*1000)
+        return interval
+    }
+    var receiptItem:IAPReceiptItem?{
+        guard let type = productType else { return nil }
+        return self[type]
+    }
+    var cancellationDate:Date?{
+        guard let item = receiptItem else {return nil}
+        return item.cancellationDate
     }
     
     subscript(productType:IAPProductType)->IAPReceiptItem?{
@@ -73,7 +82,6 @@ struct IAPVerifySubscription {
         }
     }
     var isNotPurchased:Bool{
-        
         let vl = self.subscriptionResult
         switch vl {
         case .notPurchased: return true
@@ -81,16 +89,21 @@ struct IAPVerifySubscription {
             
         }
     }
+    var isCancelled:Bool{
+        return cancellationDate != nil
+    }
     var isActive:Bool{
         if let expireDate = expiredDate {
             return Date() < expireDate
+        }else if isCancelled == false{
+            return true
         }else{
             return false
         }
     }
     var orginalTransactionId:String?{
         if let detail = pruchaseDetail,let originalTransaction =  detail.originalTransaction{
-             return originalTransaction.transactionIdentifier
+            return originalTransaction.transactionIdentifier
         }else if let productType = self.productType, let v = self[productType]{
             return v.originalTransactionId
         }else{
@@ -99,8 +112,8 @@ struct IAPVerifySubscription {
     }
     var parameters:[String:Any]?{
         print("orginalTransactionId \(String(describing: orginalTransactionId))")
-        guard let receiptString =  self.receiptString, let expiredDate  = self.expiredTimestamp  else { return nil}
-        return["planName":product.localizedTitle,"planDescription":product.localizedDescription,"productId":product.productIdentifier,"productPrice":self.product.price,"expiryDate":expiredDate,"receiptData":receiptString]
+        guard let receiptString =  self.receiptString, let expiredDate  = self.expiredTimestamp , let trail = kTrailData else { return nil}
+        return["udid":trail.uuidString,"productId":product.productIdentifier,"expireDate":expiredDate,"receiptData":receiptString]
         
     }
     

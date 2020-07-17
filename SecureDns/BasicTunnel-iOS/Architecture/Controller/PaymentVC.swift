@@ -11,19 +11,20 @@ import UIKit
 class PaymentVC: UIViewController {
     @IBOutlet weak private var termPolicylbl: UILabel!
     @IBOutlet fileprivate var purchaseBtn: UIButton!
+    
     fileprivate var viewModel:CBDSNViewModel{
         return CBDSNViewModel.shared
     }
-    
+    var didRefresh:(()->Void)?
     override func viewDidLoad() {
         super.viewDidLoad()
         termAndPolicyConfig()
-       
+        
         
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-         getIApProduct()
+        getIApProduct()
     }
     
     private func getIApProduct(){
@@ -45,9 +46,16 @@ class PaymentVC: UIViewController {
     }
     //MARK:- Upgrade Plan
     @IBAction func onBuy(_ sender: Any) {
-        viewModel.buy {
-            
+        viewModel.purchase { success in
+            async {
+                if success{
+                    self.dismiss(animated: true) {
+                        self.didRefresh?()
+                    }
+                }
+            }
         }
+        
     }
     @IBAction func onCancel(_ sender: Any) {
         self.dismiss(animated: true) {
@@ -79,9 +87,9 @@ fileprivate extension PaymentVC{
             async {
                 print("user tapped on \(string) text")
                 if string == "Privacy Policy" {
-                    self.presentSafari(URL(string:"https://www.websitepolicies.com/policies/view/hGbW4U3q")!)
+                    self.presentSafari(URL(string:"https://adgap.wordpress.com/adgap-privacy-policy")!)
                 }else if string == "Terms of Service"{
-                    self.presentSafari(URL(string:"https://www.websitepolicies.com/policies/view/djqN4SDa")!)
+                    self.presentSafari(URL(string:"https://adgap.wordpress.com/adgap-terms-and-conditions")!)
                 }
                 
             }

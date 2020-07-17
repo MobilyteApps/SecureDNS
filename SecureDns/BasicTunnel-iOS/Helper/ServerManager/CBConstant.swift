@@ -158,7 +158,8 @@ var KConnected:Bool{
     }
 }
 func resetPref(){
-    UserDefaults.removeObject(forKey: kVPNConectedKey)
+   // UserDefaults.removeObject(forKey: kVPNConectedKey)
+    CBKeychain.removeValue(forKey: kTrailDataKey)
 }
 
 

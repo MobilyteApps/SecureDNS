@@ -138,10 +138,7 @@ class IAPManager : NSObject{
                         completion(false)
                         
                     }
-                    
-                    
-                    
-                    
+               
                 case .error(let error):
                     switch error {
                     case .noReceiptData,.noRemoteData,.jsonDecodeError,.networkError:

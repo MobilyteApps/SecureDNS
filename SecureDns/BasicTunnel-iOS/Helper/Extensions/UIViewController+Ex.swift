@@ -45,8 +45,7 @@ extension UIViewController{
     
     fileprivate func alertControl(title:String = kAppTitle,message:String?,cancelTitle:String = "OK",otherTitle:String?,onCompletion:((_ didSelectIndex:Int)->Swift.Void)? = nil){
         
-        let msge  = (message != nil && !message!.isEmpty) ? "\n\(message!)" : nil
-        let alertModel = AlertControllerModel(contentViewController: nil, title: title,message: msge, titleFont: UIFont.systemFont(ofSize: 17, weight: .semibold),messageFont: UIFont.systemFont(ofSize: 15, weight: .regular))
+        let alertModel = AlertControllerModel(contentViewController: nil, title: title,message: message, titleFont: UIFont.systemFont(ofSize: 17, weight: .semibold),messageFont: UIFont.systemFont(ofSize: 15, weight: .regular))
         var actions:[AlertActionModel] = [AlertActionModel]()
         
         let alertActionTitle = AlertActionModel.Title(title: cancelTitle,titleColor: .systemBlue)
@@ -94,11 +93,11 @@ extension UIViewController{
     }
     /// `SFSafariViewController`Open Link on Safari App
       func presentSafari(_ link:URL) {
-          if link.absoluteString.isValidateUrl {
+          //if link.absoluteString.isValidateUrl {
               let constroller = SFSafariViewController(url: link)
               constroller.preferredControlTintColor = .blueColor3
               self.present(constroller, animated: true, completion: nil)
-          }
+          
           
       }
     

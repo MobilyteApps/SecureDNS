@@ -42,7 +42,6 @@
 		7D72D29024BE336300A20227 /* JKCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D72D28F24BE336300A20227 /* JKCardView.swift */; };
 		7D72D29224BE33EB00A20227 /* DispatchQueue+Ex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D72D29124BE33EB00A20227 /* DispatchQueue+Ex.swift */; };
 		7D72D29424BE340E00A20227 /* Array+Ex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D72D29324BE340E00A20227 /* Array+Ex.swift */; };
-		7D96FD5B24AA8173006F9720 /* testkey.ovpn in Resources */ = {isa = PBXBuildFile; fileRef = 7D96FD5A24AA8173006F9720 /* testkey.ovpn */; };
 		7D99742424C0B98900D45A6C /* PaymentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D99742324C0B98800D45A6C /* PaymentVC.swift */; };
 		7D99742724C0DC4100D45A6C /* CBActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D99742624C0DC4100D45A6C /* CBActivity.swift */; };
 		7D99742A24C0DC7A00D45A6C /* CBMailComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D99742924C0DC7A00D45A6C /* CBMailComposer.swift */; };
@@ -129,7 +128,6 @@
 		7D72D28F24BE336300A20227 /* JKCardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JKCardView.swift; sourceTree = "<group>"; };
 		7D72D29124BE33EB00A20227 /* DispatchQueue+Ex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Ex.swift"; sourceTree = "<group>"; };
 		7D72D29324BE340E00A20227 /* Array+Ex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Ex.swift"; sourceTree = "<group>"; };
-		7D96FD5A24AA8173006F9720 /* testkey.ovpn */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testkey.ovpn; sourceTree = "<group>"; };
 		7D99742324C0B98800D45A6C /* PaymentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentVC.swift; sourceTree = "<group>"; };
 		7D99742624C0DC4100D45A6C /* CBActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBActivity.swift; sourceTree = "<group>"; };
 		7D99742924C0DC7A00D45A6C /* CBMailComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMailComposer.swift; sourceTree = "<group>"; };
@@ -339,7 +337,6 @@
 		7D72D29524BE392000A20227 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				7D96FD5A24AA8173006F9720 /* testkey.ovpn */,
 				7DA19A6624B4D57C00382411 /* iosv1.ovpn */,
 			);
 			path = Resources;
@@ -550,7 +547,6 @@
 				0EB39FF01F7424F80023AFFC /* Assets.xcassets in Resources */,
 				7DA19A6724B4D57C00382411 /* iosv1.ovpn in Resources */,
 				0EB39FEE1F7424F80023AFFC /* Main.storyboard in Resources */,
-				7D96FD5B24AA8173006F9720 /* testkey.ovpn in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -849,7 +845,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = xyz.dnsbkv.adgap;
 				PRODUCT_NAME = ADGAP;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -866,7 +862,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = xyz.dnsbkv.adgap;
 				PRODUCT_NAME = ADGAP;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

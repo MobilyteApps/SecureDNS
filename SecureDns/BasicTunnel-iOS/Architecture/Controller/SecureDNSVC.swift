@@ -57,18 +57,20 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     //MARK:- UIView LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         conntectionStatusSwitch.set(width: 130, height: 75)
         getPremiumValidity()
         reachabilityObserver()
         reloadCurrentManager()
+        NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { _ in
+            self.getPremiumValidity()
+        }
         NotificationCenter.default.addObserver(self,selector: #selector(onDidChangeVPNStatus(notification:)),name: .NEVPNStatusDidChange,object: nil)
         
     }
     
     //MARK:- Check Premium Validity
     private func getPremiumValidity(){
-        viewModel.premiumValidate {
+        viewModel.register {
             async {
                 self.loadData()
                 
@@ -77,8 +79,9 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     }
     
     private func loadData(){
-        self.leftTrailDayslbl.text = self.viewModel.tailValidTime
+        self.leftTrailDayslbl.text = self.viewModel.alertString
         self.connectionBtn.isUserInteractionEnabled = self.viewModel.isActive
+        //resetPref()
         reachabilityObserver()
     }
     
@@ -174,6 +177,24 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
             }
         }
     }
+    
+    // MARK: - Navigation
+    
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if segue.identifier == "PaymentSegue" {
+            let controller = segue.destination as? PaymentVC
+            controller?.didRefresh = {
+                async {
+                    self.getPremiumValidity()
+                }
+            }
+        }
+        
+    }
+    
+    
     
 }
 
