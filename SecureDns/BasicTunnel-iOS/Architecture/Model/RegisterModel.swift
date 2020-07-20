@@ -81,14 +81,14 @@ struct CBRegister:Mappable{
     
 }
 struct CBTrail:Mappable,Hashable{
-    var uuidString:String
-    var timestamp:Int64
+    var uuidString:String //deviceUUID
+    var timestamp:Int64 //trailExipredDate
     
     enum CodingKeys:String,CodingKey {
         case uuidString = "udid"
         case timestamp = "timestamp"
     }
-    var date:Date{
+    var trailExipredDate:Date{
         return Date(milliseconds: timestamp)
     }
     var timestampStr:String{

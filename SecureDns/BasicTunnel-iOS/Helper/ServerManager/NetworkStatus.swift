@@ -13,12 +13,15 @@ class NetworkStatus:NSObject{
     static let shared = NetworkStatus()
     fileprivate var jkHud:JKProgressHUD!
     var isConnected:Bool{
-        return NetworkReachabilityManager.default!.isReachable
+        guard let isReachable = NetworkReachabilityManager.default?.isReachable else {
+            AppPermission.network.show()
+            return false }
+        return isReachable
     }
     func startNotifier(completion:@escaping(NetworkReachabilityManager.NetworkReachabilityStatus)->Void){
         NetworkReachabilityManager.default!.startListening(onUpdatePerforming: completion)
     }
-   
+    
     //MARK:- showProgressHud-
     func showHud(inView view:UIView = AppDelegate.shared.window!,message title:String = ""){
         
@@ -32,8 +35,23 @@ class NetworkStatus:NSObject{
     func hideHud(){
         if let jkHud = jkHud {
             jkHud.hideHud()
-           
+            
         }
         
     }
+}
+enum AppPermission {
+    case network
+   
+    func show(){
+        var title:String = kAppTitle
+        var message:String?
+        switch self {
+        case .network:
+            title = "\"\(kAppTitle)\" \(kConnectionError)"
+            message = "The Internet connection appears to be offline."
+        }
+        AppSettingAlert(title: title, message: message)
+    }
+    
 }

@@ -10,7 +10,6 @@ import UIKit
 
 class CBDSNViewModel:NSObject{
     
-    fileprivate var register:CBRegister?
     fileprivate var iapProduct:IAPProduct?
     static let shared = CBDSNViewModel()
     var iApManager:IAPManager {return IAPManager.shared}
@@ -21,10 +20,11 @@ class CBDSNViewModel:NSObject{
     
     //MARK:- premiumValidate
     func register(completion:@escaping()->Void){
-        
+        kUserData = nil
         if kTrailData  == nil{
             let udid = UIDevice.current.identifierForVendor?.uuidString ?? ""
-            kTrailData = .init(uuidString: udid, timestamp: Date().millisecondsSince1970)
+            let trailExpireDate = Date().futureDate(.day, value: 15)
+            kTrailData = .init(uuidString: udid, timestamp: trailExpireDate.millisecondsSince1970)
         }
         guard NetworkStatus.shared.isConnected , let params = kTrailData?.jsonObject else{return}
         NetworkStatus.shared.showHud()
@@ -37,7 +37,7 @@ class CBDSNViewModel:NSObject{
                     let rs = data.JKDecoder(CBResponse<CBRegister>.self)
                     switch rs {
                     case .success(let vl):
-                        self.register = vl.data
+                        kUserData = vl.data
                         completion()
                     case .failure(let error):
                         alertMessage = error.localizedDescription
@@ -51,6 +51,7 @@ class CBDSNViewModel:NSObject{
             }
         }
     }
+    //MARK:- Get InApp Product
     func getIApProduct(completion:@escaping(Bool)->Void){
         guard NetworkStatus.shared.isConnected  else{return}
         iApManager.getProducts([.monthly]) {
@@ -60,7 +61,7 @@ class CBDSNViewModel:NSObject{
             }
         }
     }
-      //MARK:- purchase
+    //MARK:- purchase
     func purchase(completion:@escaping(Bool)->Void){
         
         guard NetworkStatus.shared.isConnected,let product = self.iapProduct  else{return}
@@ -88,6 +89,7 @@ class CBDSNViewModel:NSObject{
             NetworkStatus.shared.hideHud()
             return
         }
+        
         let handler  = {(_ result:Result<Data,Error>) in
             async {
                 NetworkStatus.shared.hideHud()
@@ -98,7 +100,8 @@ class CBDSNViewModel:NSObject{
                     case .success(let res):
                         if res.isSuccess {
                             if let subscription  = res.data {
-                                self.register = subscription
+                                kTrailData?.timestamp = Date().millisecondsSince1970
+                                kUserData = subscription
                                 completion(true)
                             }
                             
@@ -124,11 +127,12 @@ class CBDSNViewModel:NSObject{
     
 }
 extension CBDSNViewModel{
+    
     var isApProduct:Bool{
         return self.iapProduct != nil
     }
     private var isValidService:Bool{
-        guard let vl = register else { return false}
+        guard let vl = kUserData else { return false}
         return vl.isValidService
     }
     var isActive:Bool{
@@ -142,13 +146,13 @@ extension CBDSNViewModel{
         
     }
     var alertString:String{
-         guard let vl = register else { return "Get unlimited access to Premium features, \n Please buy the monthly subscription."}
+        guard let vl = kUserData else { return "Get unlimited access to Premium features, \n Please buy the monthly subscription."}
         if vl.isTrail {
             return "Get Premium features Free trail for:\n" + "\(vl.daysLeft)" + " days remaining"
-           }else{
-               return "Get unlimited access to Premium features, \n Please buy the monthly subscription."
-           }
-       }
+        }else{
+            return "Get unlimited access to Premium features, \n Please buy the monthly subscription."
+        }
+    }
     var productTitle:String{
         return iapProduct?.localizedTitle ?? ""
         

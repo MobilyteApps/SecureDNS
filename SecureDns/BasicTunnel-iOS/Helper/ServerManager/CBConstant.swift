@@ -8,7 +8,7 @@
 
 import Foundation
 import UIKit
-import AVKit
+
 
 func async(onCompletion:@escaping()->Void){
     DispatchQueue.main.async {
@@ -42,37 +42,7 @@ var currentController:UIViewController?{
     }
     return nil
 }
-var avPlayerViewController:AVPlayerViewController?{
-    if let controller = currentController as? UINavigationController{
-        if  let visibleViewController = controller.visibleViewController{
-            
-            if let currentPlayer = visibleViewController.presentedViewController as? AVPlayerViewController{
-                return currentPlayer
-            }else if let currentPlayer = visibleViewController as? AVPlayerViewController {
-                return currentPlayer
-            }else{
-                return visibleViewController as? AVPlayerViewController
-            }
-            
-        }else{
-            if let currentPlayer = controller.presentedViewController as? AVPlayerViewController{
-                return currentPlayer
-                
-            }else{
-                return nil
-            }
-        }
-    }else if let controller = currentController  {
-        if let currentPlayer = controller.presentedViewController as? AVPlayerViewController{
-            return currentPlayer
-            
-        }else{
-            return controller as? AVPlayerViewController
-        }
-    }else{
-        return nil
-    }
-}
+
 var currentAlert:UIViewController?{
     
     if let controller = currentController as? UINavigationController{
@@ -143,10 +113,26 @@ func AppSettingAlert(title:String,message:String?){
 
 var kTrailData:CBTrail?{
     set{
-        _ = CBKeychain.set(encoder: newValue, forKey: kTrailDataKey)
+        guard let vl = newValue else {
+            CBKeychain.removeValue(forKey: kTrailDataKey)
+            return
+        }
+        _ = CBKeychain.set(encoder: vl, forKey: kTrailDataKey)
     }
     get{
         return CBKeychain.get(decoder: CBTrail.self, forKey: kTrailDataKey)
+    }
+}
+var kUserData:CBRegister?{
+    set{
+        guard let  model = newValue else {
+            UserDefaults.removeObject(forKey: kUserDataKey)
+            return
+        }
+        UserDefaults.set(encoder:model, forKey: kUserDataKey)
+    }
+    get{
+        return UserDefaults.get(decoder: CBRegister.self, forKey: kUserDataKey)
     }
 }
 var KConnected:Bool{
@@ -158,8 +144,10 @@ var KConnected:Bool{
     }
 }
 func resetPref(){
-   // UserDefaults.removeObject(forKey: kVPNConectedKey)
-    CBKeychain.removeValue(forKey: kTrailDataKey)
+    // UserDefaults.removeObject(forKey: kVPNConectedKey)
+    kUserData = nil
+    kTrailData = nil
+   
 }
 
 
@@ -181,4 +169,5 @@ var kAppTitle :String           {get{return Bundle.kAppTitle}}
 let kConnectionError        = "No Internet Connection!☹"
 let kTrailDataKey           = "TrailData"
 let kVPNConectedKey         = "VPNConected"
+let kUserDataKey         = "UserDataKey"
 

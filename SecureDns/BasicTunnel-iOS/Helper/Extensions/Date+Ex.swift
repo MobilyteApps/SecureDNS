@@ -22,7 +22,10 @@ extension Date {
     func futureDate(_ component: Calendar.Component = .day, value: Int = 14)->Date{
         Calendar.current.date(byAdding: component, value: value, to: self)!
     }
-   
+    func get(_ component: Calendar.Component = .day,calendar: Calendar = Calendar.current)->Int{
+        return calendar.component(component, from: self)
+    }
+    
 }
 
 extension Date{

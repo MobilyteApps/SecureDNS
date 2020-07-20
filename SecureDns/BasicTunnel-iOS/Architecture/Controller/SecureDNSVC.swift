@@ -57,10 +57,12 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     //MARK:- UIView LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        //resetPref()
         conntectionStatusSwitch.set(width: 130, height: 75)
         getPremiumValidity()
         reachabilityObserver()
         reloadCurrentManager()
+        
         NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { _ in
             self.getPremiumValidity()
         }
