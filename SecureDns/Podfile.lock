@@ -1,8 +1,8 @@
 PODS:
-  - Alamofire (5.2.1)
+  - Alamofire (5.2.2)
   - OpenSSL-Apple (1.1.1g.6)
   - SwiftyBeaver (1.9.1)
-  - SwiftyStoreKit (0.15.0)
+  - SwiftyStoreKit (0.16.1)
   - TunnelKit (2.2.7):
     - TunnelKit/Protocols/OpenVPN (= 2.2.7)
   - TunnelKit/AppExtension (2.2.7):
@@ -29,12 +29,12 @@ SPEC REPOS:
     - TunnelKit
 
 SPEC CHECKSUMS:
-  Alamofire: e911732990610fe89af59ac0077f923d72dc3dfd
+  Alamofire: 814429acc853c6c54ff123fc3d2ef66803823ce0
   OpenSSL-Apple: c9c1b9c5b2b1fc4e1758fc5f0836b58ae7fd8183
   SwiftyBeaver: a1f5691458561414bcfab51874b2b7445451602b
-  SwiftyStoreKit: 033d06b6f87955405d3f844a18a7687c2438592a
+  SwiftyStoreKit: 6b9c08810269f030586dac1fae8e75871a82e84a
   TunnelKit: cbd063b8b6f4f6a182cf48e646ff35cb2365bf91
 
-PODFILE CHECKSUM: 4e7217f04330c450145971aa10b85819e4c24c86
+PODFILE CHECKSUM: 5fc694cbf65e35ce3f72c2db2e666a8fa1253676
 
 COCOAPODS: 1.8.4

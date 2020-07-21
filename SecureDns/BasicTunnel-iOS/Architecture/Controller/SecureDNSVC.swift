@@ -26,20 +26,16 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
             case  .connecting:
                 statusText = "Connecting..."
                 isOn = false
-                //self.conntectionStatusSwitch.setOn(false, animated: true)
                 KConnected = false
             case .connected:
                 statusText = "Connected"
-                //self.conntectionStatusSwitch.setOn(true, animated: true)
                 isOn = true
                 KConnected = true
             case .disconnected:
                 statusText = "Connect"//"Disconnected"
-                // self.conntectionStatusSwitch.setOn(false, animated: true)
                 isOn = false
             case .disconnecting:
                 statusText = "Disconnecting..."
-                // self.conntectionStatusSwitch.setOn(false, animated: true)
                 isOn = false
                 
             default:
@@ -83,7 +79,6 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     private func loadData(){
         self.leftTrailDayslbl.text = self.viewModel.alertString
         self.connectionBtn.isUserInteractionEnabled = self.viewModel.isActive
-        //resetPref()
         reachabilityObserver()
     }
     
@@ -249,6 +244,7 @@ fileprivate extension SecureDNSVC{
                 return
             }
             self.currentManager?.isEnabled = true
+            self.currentManager?.isOnDemandEnabled = true
             let session = self.currentManager?.connection as! NETunnelProviderSession
             do {
                 try session.startTunnel()
@@ -287,7 +283,7 @@ fileprivate extension SecureDNSVC{
                 manager.protocolConfiguration = protocolConfiguration
             }
             manager.isEnabled = true
-            
+            manager.isOnDemandEnabled = true
             manager.saveToPreferences { (error) in
                 if let error = error {
                     print("error saving preferences: \(error)")
