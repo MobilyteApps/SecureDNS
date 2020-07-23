@@ -9,7 +9,20 @@
 import UIKit
 import NetworkExtension
 import TunnelKit
-
+var KConnected:NEVPNStatus{
+    set{
+        guard newValue == .connected || newValue == .disconnected else {
+            UserDefaults.removeObject(forKey: kVPNConectedKey)
+            return
+        }
+        UserDefaults.set(integer: newValue.rawValue, forKey: kVPNConectedKey)//set(boolValue: newValue, forKey: kVPNConectedKey)
+    }
+    get{
+        let vl = UserDefaults.getInteger(forKey: kVPNConectedKey)
+        guard let st = NEVPNStatus(rawValue: vl) else { return .invalid }
+        return st//getBool(forKey: kVPNConectedKey)
+    }
+}
 class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     @IBOutlet fileprivate var conntectionStatusSwitch: UISwitch!
     @IBOutlet fileprivate var connectionStatuslbl: UILabel!
@@ -17,20 +30,21 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     @IBOutlet fileprivate var leftTrailDayslbl: UILabel!
     @IBOutlet fileprivate var upgradeBtn: UIButton!
     fileprivate var currentManager: NETunnelProviderManager?
+    fileprivate var useDNSServers:[String]?
     fileprivate var status: NEVPNStatus = .invalid{
-        
         didSet{
             var isOn:Bool = false
+            
             var statusText:String = "Connect"
             switch status {
             case  .connecting:
                 statusText = "Connecting..."
                 isOn = false
-                KConnected = false
+                KConnected = status
             case .connected:
                 statusText = "Connected"
                 isOn = true
-                KConnected = true
+                KConnected = status
             case .disconnected:
                 statusText = "Connect"//"Disconnected"
                 isOn = false
@@ -45,7 +59,6 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
             self.conntectionStatusSwitch.setOn(isOn, animated: true)
         }
     }
-    //fileprivate var isConnected = false
     fileprivate var viewModel:CBDSNViewModel{
         return CBDSNViewModel.shared
     }
@@ -55,64 +68,53 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
         super.viewDidLoad()
         //resetPref()
         conntectionStatusSwitch.set(width: 130, height: 75)
+        addObserver()
         getPremiumValidity()
-        reachabilityObserver()
         reloadCurrentManager()
-        
-        NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { _ in
-            self.getPremiumValidity()
+        reachabilityObserver {isReachable in
+            self.reconnection(isRechiblity: isReachable)
         }
-        NotificationCenter.default.addObserver(self,selector: #selector(onDidChangeVPNStatus(notification:)),name: .NEVPNStatusDidChange,object: nil)
-        
+       
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
     }
     
     //MARK:- Check Premium Validity
+    
     private func getPremiumValidity(){
         viewModel.register {
             async {
                 self.loadData()
+                 self.checkVPNStatus()
                 
             }
         }
     }
-    
+    //MARK:- load Device Register Data
     private func loadData(){
         self.leftTrailDayslbl.text = self.viewModel.alertString
         self.connectionBtn.isUserInteractionEnabled = self.viewModel.isActive
-        reachabilityObserver()
+        
     }
     
     //MARK:- reachabilityObserver
-    private func reachabilityObserver() {
-        
+    private func reachabilityObserver(completion:@escaping(Bool)->Void) {
         NetworkStatus.shared.startNotifier { status in
             switch status{
             case .reachable:
+                completion(true)
                 print("Reachability: Network available 😃")
-                async {
-                    self.reconnection()
-                }
             case .notReachable:
                 print("Reachability: Network unavailable 😟")
-                KConnected = false
-                self.reconnection()
+                completion(true)
             default:break
             }
         }
         
     }
     
-    //MARK:- VPNStatusDidChange Observer
-    @objc private func onDidChangeVPNStatus(notification: NSNotification) {
-        guard viewModel.isActive,let status = currentManager?.connection.status else {
-            print("VPNStatusDidChange")
-            self.status = .disconnected
-            return
-        }
-        print("VPNStatusDidChange: \(status.rawValue)")
-        self.status = status
-        
-    }
+    
     //MARK:- On Click VPN Connection
     @IBAction private func onConnection(_ sender: Any) {
         guard viewModel.isActive else {
@@ -150,7 +152,7 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     }
     @IBAction func onReport(_ sender: UIButton) {
         
-        self.showAlertAction(title: "Report bugs", message: "do you want to Report bugs of current verion \(kAppTitle) application.", cancelTitle: "NO", otherTitle: "YES") { index in
+        self.showAlertAction(title: "Report bugs", message: "Do you want to report bugs or websites that have been wrongfully blocked?", cancelTitle: "NO", otherTitle: "YES") { index in
             if index == 2{
                 let subject:String = (!Bundle.kAppTitle.isEmpty && !Bundle.kAppVersionString.isEmpty && !Bundle.kBuildNumber.isEmpty) ? "Report bugs for \(Bundle.kAppTitle), version:\(Bundle.kAppVersionString),Build:\(Bundle.kBuildNumber)" :"Report bugs "
                 CBMailComposer.shared.setBccRecipients(["Adgap@gmail.com"])
@@ -197,14 +199,15 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
 
 
 
-fileprivate extension SecureDNSVC{
+private extension SecureDNSVC{
     
-    private static let appGroup = "group.xyz.dnsbkv.adgap"
-    private static let tunnelIdentifier = "xyz.dnsbkv.adgap.networkExtension"
+    static let appGroup = "group.xyz.dnsbkv.adgap"
+    static let tunnelIdentifier = "xyz.dnsbkv.adgap.networkExtension"
     
     //MARK:- make NETunnelProviderProtocol
-    private func makeProtocol() -> NETunnelProviderProtocol {
-        guard  let configurationFileURL = Bundle.main.url(forResource: "iosv1", withExtension: "ovpn") else{
+    func makeProtocol() -> NETunnelProviderProtocol {
+        //Bundle.url(forResource: "iosv1", extension: "ovpn")
+        guard  let configurationFileURL = viewModel.configFileURL else{
             print("File not found")
             fatalError()
         }
@@ -213,6 +216,7 @@ fileprivate extension SecureDNSVC{
             
             var builder = OpenVPNTunnelProvider.ConfigurationBuilder(sessionConfiguration: configurationFileContent.configuration)
             builder.shouldDebug = true
+            useDNSServers = builder.sessionConfiguration.dnsServers
             //builder.masksPrivateData = false
             let configuration = builder.build()
             return try configuration.generatedTunnelProtocol(withBundleIdentifier: SecureDNSVC.tunnelIdentifier, appGroup: SecureDNSVC.appGroup)
@@ -226,33 +230,85 @@ fileprivate extension SecureDNSVC{
         
     }
     //MARK:- reconnection
-    func reconnection(){
-        if viewModel.isActive,KConnected{
-            self.connect()
+    func reconnection(isRechiblity:Bool){
+        if isRechiblity {
+            guard viewModel.isActive else {
+                if KConnected == .connected || status == .connected {
+                    disconnect()
+                }
+                
+                return
+            }
+           
+            
+            if KConnected == .disconnected || status == .disconnected{
+                self.connect()
+            }else{
+                self.disconnect()
+            }
         }else{
-            self.disconnect()
+            if KConnected == .connected || status == .connected {
+                                            
+                disconnect()
+            }
         }
+        
         
     }
     //MARK:- connect
+    func enableVPN(manager:NETunnelProviderManager){
+        ///`isEanble`:Boolean for enable to create VPN
+        manager.isEnabled = true
+        ///`enabledOnDemandConnect`: Boleean
+        manager.isOnDemandEnabled = true
+//        //Set rules
+//        var rules = [NEOnDemandRule]()
+//        let rule = NEOnDemandRuleConnect()
+//        rule.interfaceTypeMatch = .any
+//        rules.append(rule)
+//        manager.onDemandRules = rules
+        // TLDList is a struct I created in its own swift file that has an array of all top level domains
+        let evaluationRule = NEEvaluateConnectionRule(matchDomains: TLDList.tlds,
+                                                      andAction: NEEvaluateConnectionRuleAction.connectIfNeeded)
+        
+         evaluationRule.useDNSServers =  useDNSServers
+        let onDemandRule = NEOnDemandRuleEvaluateConnection()
+        onDemandRule.connectionRules = [evaluationRule]
+        onDemandRule.interfaceTypeMatch = .any
+        manager.onDemandRules = [onDemandRule]
+    }
     func connect() {
-        configureVPN({ (manager) in
-            return self.makeProtocol()
-        }, completionHandler: { (error) in
-            if let error = error {
-                print("configure error: \(error)")
-                return
+        if viewModel.configFileURL != nil {
+            
+            configureVPN({ (manager) in
+                return self.makeProtocol()
+            }, completionHandler: { (error) in
+                if let error = error {
+                    print("configure error: \(error)")
+                    return
+                }else if let manager  = self.currentManager {
+                    self.enableVPN(manager: manager)
+                    if let session = manager.connection as? NETunnelProviderSession{
+                        do {
+                            try session.startTunnel()
+                            print("start Tunnel called")
+                        } catch let e {
+                            print("error starting tunnel: \(e)")
+                        }
+                    }
+                }
+                
+                
+            })
+        }else{
+            
+            viewModel.download {
+                async {
+                    self.connect()
+                }
             }
-            self.currentManager?.isEnabled = true
-            self.currentManager?.isOnDemandEnabled = true
-            let session = self.currentManager?.connection as! NETunnelProviderSession
-            do {
-                try session.startTunnel()
-                print("start Tunnel called")
-            } catch let e {
-                print("error starting tunnel: \(e)")
-            }
-        })
+        }
+        
     }
     
     //MARK:- disconnect
@@ -265,7 +321,7 @@ fileprivate extension SecureDNSVC{
                 print(err.localizedDescription)
             }
             self.currentManager?.connection.stopVPNTunnel()
-            KConnected = false
+            
             
         })
     }
@@ -282,8 +338,7 @@ fileprivate extension SecureDNSVC{
             if let protocolConfiguration = configure(manager) {
                 manager.protocolConfiguration = protocolConfiguration
             }
-            manager.isEnabled = true
-            manager.isOnDemandEnabled = true
+            self.enableVPN(manager: manager)
             manager.saveToPreferences { (error) in
                 if let error = error {
                     print("error saving preferences: \(error)")
@@ -300,29 +355,65 @@ fileprivate extension SecureDNSVC{
         NETunnelProviderManager.loadAllFromPreferences { (managers, error) in
             if let error = error {
                 completionHandler?(error)
-                return
+                
+            }else if let managers = managers{
+                var manager: NETunnelProviderManager?
+                if let m = managers.first(where: {$0.protocolConfiguration?.isKind(of: NETunnelProviderProtocol.self) == true}), let p = m.protocolConfiguration as? NETunnelProviderProtocol, p.providerBundleIdentifier == SecureDNSVC.tunnelIdentifier{
+                    manager = m
+                }
+//                for m in managers {
+//                    if let p = m.protocolConfiguration as? NETunnelProviderProtocol {
+//                        if (p.providerBundleIdentifier == SecureDNSVC.tunnelIdentifier) {
+//                            manager = m
+//                            break
+//                        }
+//                    }
+//                }
+                
+                if (manager == nil) {
+                    manager = NETunnelProviderManager()
+                }
+                
+                self.currentManager = manager
+                self.status = manager!.connection.status
+                completionHandler?(nil)
             }
             
-            var manager: NETunnelProviderManager?
             
-            
-            for m in managers! {
-                if let p = m.protocolConfiguration as? NETunnelProviderProtocol {
-                    if (p.providerBundleIdentifier == SecureDNSVC.tunnelIdentifier) {
-                        manager = m
-                        break
-                    }
+        }
+    }
+    
+    //MARK:- Add Observers
+    func addObserver(){
+        NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { _ in
+            self.viewModel.register {
+                async {
+                    self.loadData()
                 }
             }
-            
-            if (manager == nil) {
-                manager = NETunnelProviderManager()
+        }
+        NotificationCenter.default.addObserver(forName: .NEVPNStatusDidChange, object: nil, queue: .main) { _ in
+            if self.viewModel.isActive{
+                self.checkVPNStatus()
+            }else{
+                self.getPremiumValidity()
             }
             
-            self.currentManager = manager
-            self.status = manager!.connection.status
-            completionHandler?(nil)
         }
+    }
+    //MARK:- Remove Observers
+    func removeObserver(){
+        NotificationCenter.default.removeObserver(self, name: .NEVPNStatusDidChange, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
+    }
+    //MARK:- checkVPNStatus
+    func checkVPNStatus(){
+        guard let status = currentManager?.connection.status else {
+            print("VPNStatusDidChange")
+            return
+        }
+        print("VPNStatusDidChange: \(status.rawValue)")
+        self.status = status
     }
     
 }
@@ -338,3 +429,5 @@ extension UISwitch {
         transform = CGAffineTransform(scaleX: widthRatio, y: heightRatio)
     }
 }
+
+

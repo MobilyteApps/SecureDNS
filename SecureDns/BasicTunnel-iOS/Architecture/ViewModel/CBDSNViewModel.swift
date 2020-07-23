@@ -11,6 +11,7 @@ import UIKit
 class CBDSNViewModel:NSObject{
     
     fileprivate var iapProduct:IAPProduct?
+    var configFileURL:URL?
     static let shared = CBDSNViewModel()
     var iApManager:IAPManager {return IAPManager.shared}
     
@@ -38,7 +39,12 @@ class CBDSNViewModel:NSObject{
                     switch rs {
                     case .success(let vl):
                         kUserData = vl.data
-                        completion()
+                        if kUserData?.downloadableConfig == true {
+                            self.download(completion: completion)
+                        }else{
+                           completion()
+                        }
+                        
                     case .failure(let error):
                         alertMessage = error.localizedDescription
                         
@@ -121,6 +127,46 @@ class CBDSNViewModel:NSObject{
         }
         
         CBServer.shared.dataTask(.default, endpoint: CBEndpoint.subscription(.buySubscription), method: .post, parameters: parameters, encoding: .JSON, headers: nil, completion: handler)
+        
+    }
+    //MARK:- Download OVPN Config File
+    func download(completion:@escaping()->Void){
+        
+        guard NetworkStatus.shared.isConnected, let uuid = kTrailData?.uuidString else {
+            NetworkStatus.shared.hideHud()
+            return
+        }
+    
+        let result = FileManager.getfile(filename: "\(uuid).ovpn")
+        switch result {
+        case .success(let url):
+            configFileURL = url
+            completion()
+        default:
+            guard kUserData?.downloadableConfig == true else {
+                return
+            }
+            NetworkStatus.shared.showHud(progressMode: .HorizontalBar, message: "Downloading config file...")
+            CBServer.shared.downloadTask(endpoint: .ovpnConfigFile(udid: uuid), completion: {result  in
+                async {
+                    NetworkStatus.shared.hideHud()
+                    switch result{
+                    case .success(let url):
+                        if let url  = url {
+                            self.configFileURL = url
+                            completion()
+                        }else{
+                            self.download(completion: completion)
+                        }
+                        
+                    case .failure(let error):
+                        alertMessage = error.localizedDescription
+                    }
+                }
+            }, downloadProgress: {progress in
+                NetworkStatus.shared.progress = progress.fractionCompleted
+            })
+        }
         
     }
     

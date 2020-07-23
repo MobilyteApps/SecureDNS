@@ -54,5 +54,13 @@ class CBSessionConfig:NSObject{
         return Alamofire.Session(configuration: configure)
     }()
     
+    //MARK:-documentsDirectoryURL-
+    lazy var documentsDirectoryURL:URL = {
+       // FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first
+        
+        let documents = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+        return documents
+    }()
+    
     
 }

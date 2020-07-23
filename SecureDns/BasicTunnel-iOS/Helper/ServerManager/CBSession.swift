@@ -34,6 +34,26 @@ final class CBSession {
     }
     
     
+    //MARK:- Download Request
+    func download<Parameters: Mappable>(_ state:CBSessionConfig.State = .default,url:URLConvertible,
+                                        method: HTTPMethod = .get,
+                                        parameters: Parameters? = nil,
+                                        encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                        headers: HTTPHeaders? = nil, to destination: DownloadRequest.Destination? = nil)->DownloadRequest{
+        return state.session.download(url, method: method, parameters: parameters, encoder: encoder, headers: headers,to: destination)
+        
+    }
+    
+    func download(_ state:CBSessionConfig.State = .default, url: URLConvertible,
+                  method: HTTPMethod = .get,
+                  parameters: Parameters? = nil,
+                  encoding: ParameterEncoding = URLEncoding.default,
+                  headers: HTTPHeaders? = nil, to destination: DownloadRequest.Destination? = nil) -> DownloadRequest{
+        return state.session.download(url, method: method, parameters: parameters, encoding: encoding, headers: headers, to: destination)
+    }
+    func download(_ state:CBSessionConfig.State = .default, url: URLConvertible,to destination: DownloadRequest.Destination? = nil)->DownloadRequest{
+        return state.session.download(url, to: destination)
+    }
 
 
 }

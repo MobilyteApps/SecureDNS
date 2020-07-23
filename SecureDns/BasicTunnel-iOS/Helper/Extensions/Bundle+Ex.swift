@@ -11,7 +11,7 @@ extension Bundle{
     
     private static let bundle = Bundle.main
     static var kAppStoreReceiptURL:URL?{
-       return bundle.appStoreReceiptURL
+        return bundle.appStoreReceiptURL
     }
     
     static var kBundleURLTypes:[ [String: AnyObject] ] {
@@ -28,10 +28,10 @@ extension Bundle{
             }
         }
         return urlSchemes
-
-       
+        
+        
     }
-
+    
     static var kBundleDisplayName:String? { guard let name = bundle.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String else{return nil}
         return name
     }
@@ -60,7 +60,7 @@ extension Bundle{
     static var kAppGroupId:String{
         guard let buildnumber = bundle.object(forInfoDictionaryKey: "AppGroupId") as? String else{return ""}
         return buildnumber
-       
+        
     }
     static var kAppIcon:UIImage? {
         get{
@@ -86,7 +86,63 @@ extension Bundle{
     }
 }
 extension FileManager{
-   class func fileExists(atPath path: String)->Bool{
-        return FileManager.default.fileExists(atPath: path)
+    enum FileError:Error {
+        case notFound
+        case noDirectoryPaths
+        
+    }
+    class func fileExists(filename: String)->Bool{
+        let paths = documentDirectoryPaths
+        if let dirPath = paths.first {
+            let fileurl =  URL(fileURLWithPath: dirPath).appendingPathComponent("\(filename)")
+            if self.fileExists(atPath: fileurl.path) {
+                return true
+            }else{
+                return false
+            }
+        }else{
+            return false
+        }
+    }
+    class func fileExists(atPath path: String)->Bool{
+        return self.default.fileExists(atPath: path)
+    }
+    
+    //MARK: - getfileFromDirectory-
+    fileprivate class var documentDirectoryPaths:[String]{
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+        return paths
+    }
+    class func getfile(filename:String)->Result<URL,Error>{
+        let paths = documentDirectoryPaths
+        if let dirPath = paths.first {
+            let fileurl =  URL(fileURLWithPath: dirPath).appendingPathComponent("\(filename)")
+            if self.fileExists(atPath: fileurl.path) {
+                return .success(fileurl)
+            }else{
+                return .failure(FileError.notFound)
+            }
+        }else{
+            return  .failure(FileError.noDirectoryPaths)
+        }
+        
+    }
+    //MARK: - deletefileFromDirectory-
+    class func deletefile(filename:String)-> Result<Bool,Error>{
+        let result = self.getfile(filename: filename)
+        switch result {
+        case .success(let url):
+            do{
+                try self.default.removeItem(at: url)
+                return .success(true)
+            }catch {
+                return .failure(error)
+            }
+        case .failure(let error):
+            return .failure(error)
+        }
+        
+        
+        
     }
 }

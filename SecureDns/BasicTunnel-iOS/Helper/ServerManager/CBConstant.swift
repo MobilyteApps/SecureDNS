@@ -135,14 +135,7 @@ var kUserData:CBRegister?{
         return UserDefaults.get(decoder: CBRegister.self, forKey: kUserDataKey)
     }
 }
-var KConnected:Bool{
-    set{
-        UserDefaults.set(boolValue: newValue, forKey: kVPNConectedKey)
-    }
-    get{
-        return UserDefaults.getBool(forKey: kVPNConectedKey)
-    }
-}
+
 func resetPref(){
     // UserDefaults.removeObject(forKey: kVPNConectedKey)
     kUserData = nil

@@ -49,9 +49,10 @@ struct CBRegister:Mappable{
     var daysLeft:Int
     var isPremium:Bool
     var subscription:CBSubscription?
+    var downloadableConfig:Bool
     enum CodingKeys: String, CodingKey {
         case daysLeft  = "daysLeft"
-        case isPremium,subscription
+        case isPremium,subscription,downloadableConfig
         
     }
     
@@ -62,6 +63,7 @@ struct CBRegister:Mappable{
         daysLeft  = try values.decodeIfPresent(Int.self, forKey: .daysLeft) ?? 0
         isPremium =   try values.decodeIfPresent(Bool.self, forKey: .isPremium) ?? false
         subscription = try values.decodeIfPresent(CBSubscription.self, forKey: .subscription)
+        downloadableConfig =   try values.decodeIfPresent(Bool.self, forKey: .downloadableConfig) ?? false
         
         
     }

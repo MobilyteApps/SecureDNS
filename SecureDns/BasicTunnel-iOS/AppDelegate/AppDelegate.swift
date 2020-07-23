@@ -18,6 +18,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         logDestination.format = "$DHH:mm:ss$d $L $N.$F:$l - $M"
         log.addDestination(logDestination)
         IAPManager.shared.setupIAP()
+        if #available(iOS 13.0, *) {
+            window?.overrideUserInterfaceStyle = .light
+        } 
         // Override point for customization after application launch.
         return true
     }

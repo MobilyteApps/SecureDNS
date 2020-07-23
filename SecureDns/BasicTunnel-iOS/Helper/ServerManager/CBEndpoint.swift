@@ -15,23 +15,25 @@ private let kServerType = ServerType.live
 enum CBEndpoint {
     case auth(Auth)
     case subscription(Subscription)
+    case ovpnConfigFile(udid:String)
     case custom(String)
+    
     
     var url:String{
         switch self {
         case .auth(let auth): return auth.url
         case .custom(let val):return "\(val)"
-       
         case .subscription(let subscription):
             return subscription.url
-        
+        case .ovpnConfigFile(let udid):
+            return "\(kServerType.path)/download-config/\(udid)"
             
         }
     }
     
     enum Auth:String {
         
-     
+        
         case singUp = "getRegistered"
         
         
@@ -39,8 +41,13 @@ enum CBEndpoint {
             switch self {
             case .singUp:
                 return "\(kServerType.path)/\(self.rawValue)"
-           
+                
             }
+            
+            
+         
+            
+            
         }
         
     }
@@ -58,7 +65,7 @@ enum CBEndpoint {
         }
         
     }
-   
+    
     
 }
 

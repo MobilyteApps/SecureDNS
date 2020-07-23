@@ -47,6 +47,8 @@
 		7D99742724C0DC4100D45A6C /* CBActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D99742624C0DC4100D45A6C /* CBActivity.swift */; };
 		7D99742A24C0DC7A00D45A6C /* CBMailComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D99742924C0DC7A00D45A6C /* CBMailComposer.swift */; };
 		7DA19A6724B4D57C00382411 /* iosv1.ovpn in Resources */ = {isa = PBXBuildFile; fileRef = 7DA19A6624B4D57C00382411 /* iosv1.ovpn */; };
+		7DE7E3EB24C9465400374A7F /* tldlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE7E3EA24C9465400374A7F /* tldlist.swift */; };
+		7DE7E3ED24C9530500374A7F /* VPNConnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE7E3EC24C9530500374A7F /* VPNConnect.swift */; };
 		913C2B4424B513FC0051B6E0 /* SecureDNSVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913C2B4324B513FC0051B6E0 /* SecureDNSVC.swift */; };
 		913C2B4E24B51E6D0051B6E0 /* RegisterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913C2B4D24B51E6D0051B6E0 /* RegisterModel.swift */; };
 		913C2B5624B51E910051B6E0 /* VPNKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913C2B5324B51E910051B6E0 /* VPNKeychain.swift */; };
@@ -134,6 +136,8 @@
 		7D99742624C0DC4100D45A6C /* CBActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBActivity.swift; sourceTree = "<group>"; };
 		7D99742924C0DC7A00D45A6C /* CBMailComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMailComposer.swift; sourceTree = "<group>"; };
 		7DA19A6624B4D57C00382411 /* iosv1.ovpn */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = iosv1.ovpn; sourceTree = "<group>"; };
+		7DE7E3EA24C9465400374A7F /* tldlist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tldlist.swift; sourceTree = "<group>"; };
+		7DE7E3EC24C9530500374A7F /* VPNConnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNConnect.swift; sourceTree = "<group>"; };
 		913C2B4324B513FC0051B6E0 /* SecureDNSVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureDNSVC.swift; sourceTree = "<group>"; };
 		913C2B4824B518150051B6E0 /* Reachability.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Reachability.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		913C2B4A24B51A0B0051B6E0 /* Reachability.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Reachability.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -317,6 +321,7 @@
 			children = (
 				913C2B5324B51E910051B6E0 /* VPNKeychain.swift */,
 				7D72D28724BE256300A20227 /* CBKeychain.swift */,
+				7DE7E3EC24C9530500374A7F /* VPNConnect.swift */,
 			);
 			path = VPNKeychain;
 			sourceTree = "<group>";
@@ -340,6 +345,7 @@
 		7D72D29524BE392000A20227 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7DE7E3EA24C9465400374A7F /* tldlist.swift */,
 				7DA19A6624B4D57C00382411 /* iosv1.ovpn */,
 			);
 			path = Resources;
@@ -662,10 +668,12 @@
 				7D99742424C0B98900D45A6C /* PaymentVC.swift in Sources */,
 				7D99742A24C0DC7A00D45A6C /* CBMailComposer.swift in Sources */,
 				7D72D28424BE176400A20227 /* Date+Ex.swift in Sources */,
+				7DE7E3ED24C9530500374A7F /* VPNConnect.swift in Sources */,
 				7D72D29024BE336300A20227 /* JKCardView.swift in Sources */,
 				7D72D27D24BE088F00A20227 /* UIAlertController+Ex.swift in Sources */,
 				7D72D27624BE084C00A20227 /* CBSession.swift in Sources */,
 				7D72D26724BE082400A20227 /* Mappable.swift in Sources */,
+				7DE7E3EB24C9465400374A7F /* tldlist.swift in Sources */,
 				7D72D28824BE256300A20227 /* CBKeychain.swift in Sources */,
 				7D72D26024BE07DD00A20227 /* IAPProductType.swift in Sources */,
 				7D72D27424BE084C00A20227 /* NetworkStatus.swift in Sources */,
@@ -841,7 +849,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "BasicTunnel-iOS/BasicTunnel-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.0.2;
+				CURRENT_PROJECT_VERSION = 1.0.3;
 				DEVELOPMENT_TEAM = CSP53R6N9W;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "BasicTunnel-iOS/Info.plist";
@@ -860,7 +868,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "BasicTunnel-iOS/BasicTunnel-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.0.2;
+				CURRENT_PROJECT_VERSION = 1.0.3;
 				DEVELOPMENT_TEAM = CSP53R6N9W;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "BasicTunnel-iOS/Info.plist";

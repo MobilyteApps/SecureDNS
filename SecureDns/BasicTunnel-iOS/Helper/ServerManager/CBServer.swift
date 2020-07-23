@@ -92,8 +92,32 @@ final class CBServer: NSObject {
         }.resume()
         
     }
+
+    
+    //MARK:- DownloadTask
+    func downloadTask(_ state:CBSessionConfig.State = .default, endpoint: CBEndpoint,
+                      method: HTTPMethod = .get,
+                      headers: CBHTTPHeaders? = nil,completion:@escaping CBServerResponse<URL?>, downloadProgress:@escaping CBServerProgress){
+        let destination: DownloadRequest.Destination = { filePath,response in
+            let directory  = CBSessionConfig.shared.documentsDirectoryURL
+            let fileURL =   directory.appendingPathComponent(response.suggestedFilename!)
+            return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
+        }
+        CBSession.shared.download(state, url: endpoint.url, method: method, headers: headers, to: destination).response { (downloadResponse) in
+            switch downloadResponse.result{
+            case .success(let url):
+                completion(.success(url))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }.downloadProgress(closure: downloadProgress).resume()
+    }
+    
+    
+}
+fileprivate extension CBServer{
     //MARK:- decodableResponse
-    fileprivate func decodableResponse<T:Mappable>(dataResponse:AFDataResponse<Data>,completion:@escaping CBServerResponse<T>){
+     func decodableResponse<T:Mappable>(dataResponse:AFDataResponse<Data>,completion:@escaping CBServerResponse<T>){
          //let statusCode  = dataResponse.response!.statusCode
          let result  = dataResponse.result
          
@@ -114,6 +138,4 @@ final class CBServer: NSObject {
          }
          
      }
-    
-    
 }
