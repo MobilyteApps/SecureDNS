@@ -28,10 +28,10 @@ class NetworkStatus:NSObject{
     }
     
     //MARK:- showProgressHud-
-    func showHud(inView view:UIView = AppDelegate.shared.window!, progressMode:JKProgressHUD.HudStyle = .Indeterminate,message title:String = ""){
+    func showHud(inView view:UIView = AppDelegate.shared.window!, progressMode:JKProgressHUD.HudStyle = .Indeterminate,hudPosition position:JKProgressHUD.Position = .center,message title:String = ""){
         
         self.hideHud()
-        self.jkHud = JKProgressHUD.showProgressHud(inView: view, progressMode: progressMode, titleLabel: title)
+        self.jkHud = JKProgressHUD.showProgressHud(inView: view, progressMode: progressMode,hudPosition: position, titleLabel: title)
         self.jkHud.islineColors = true
         self.jkHud.setNeedsLayout()
         

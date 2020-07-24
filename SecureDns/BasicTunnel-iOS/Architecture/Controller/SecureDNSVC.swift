@@ -55,6 +55,8 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
             default:
                 break
             }
+            self.currentManager?.isOnDemandEnabled = isOn
+            self.currentManager?.isEnabled = isOn
             self.connectionStatuslbl.text = statusText
             self.conntectionStatusSwitch.setOn(isOn, animated: true)
         }
@@ -74,7 +76,7 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
         reachabilityObserver {isReachable in
             self.reconnection(isRechiblity: isReachable)
         }
-       
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -86,7 +88,7 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
         viewModel.register {
             async {
                 self.loadData()
-                 self.checkVPNStatus()
+                
                 
             }
         }
@@ -95,6 +97,7 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     private func loadData(){
         self.leftTrailDayslbl.text = self.viewModel.alertString
         self.connectionBtn.isUserInteractionEnabled = self.viewModel.isActive
+        self.checkVPNStatus()
         
     }
     
@@ -117,9 +120,7 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     
     //MARK:- On Click VPN Connection
     @IBAction private func onConnection(_ sender: Any) {
-        guard viewModel.isActive else {
-            return
-        }
+        
         let block = {
             switch (self.status) {
             case .invalid, .disconnected:
@@ -232,23 +233,13 @@ private extension SecureDNSVC{
     //MARK:- reconnection
     func reconnection(isRechiblity:Bool){
         if isRechiblity {
-            guard viewModel.isActive else {
-                if KConnected == .connected || status == .connected {
-                    disconnect()
-                }
-                
-                return
-            }
-           
-            
             if KConnected == .disconnected || status == .disconnected{
                 self.connect()
             }else{
-                self.disconnect()
+                disconnect()
             }
         }else{
             if KConnected == .connected || status == .connected {
-                                            
                 disconnect()
             }
         }
@@ -261,17 +252,17 @@ private extension SecureDNSVC{
         manager.isEnabled = true
         ///`enabledOnDemandConnect`: Boleean
         manager.isOnDemandEnabled = true
-//        //Set rules
-//        var rules = [NEOnDemandRule]()
-//        let rule = NEOnDemandRuleConnect()
-//        rule.interfaceTypeMatch = .any
-//        rules.append(rule)
-//        manager.onDemandRules = rules
+        //        //Set rules
+        //        var rules = [NEOnDemandRule]()
+        //        let rule = NEOnDemandRuleConnect()
+        //        rule.interfaceTypeMatch = .any
+        //        rules.append(rule)
+        //        manager.onDemandRules = rules
         // TLDList is a struct I created in its own swift file that has an array of all top level domains
         let evaluationRule = NEEvaluateConnectionRule(matchDomains: TLDList.tlds,
                                                       andAction: NEEvaluateConnectionRuleAction.connectIfNeeded)
         
-         evaluationRule.useDNSServers =  useDNSServers
+        evaluationRule.useDNSServers =  useDNSServers
         let onDemandRule = NEOnDemandRuleEvaluateConnection()
         onDemandRule.connectionRules = [evaluationRule]
         onDemandRule.interfaceTypeMatch = .any
@@ -361,14 +352,14 @@ private extension SecureDNSVC{
                 if let m = managers.first(where: {$0.protocolConfiguration?.isKind(of: NETunnelProviderProtocol.self) == true}), let p = m.protocolConfiguration as? NETunnelProviderProtocol, p.providerBundleIdentifier == SecureDNSVC.tunnelIdentifier{
                     manager = m
                 }
-//                for m in managers {
-//                    if let p = m.protocolConfiguration as? NETunnelProviderProtocol {
-//                        if (p.providerBundleIdentifier == SecureDNSVC.tunnelIdentifier) {
-//                            manager = m
-//                            break
-//                        }
-//                    }
-//                }
+                //                for m in managers {
+                //                    if let p = m.protocolConfiguration as? NETunnelProviderProtocol {
+                //                        if (p.providerBundleIdentifier == SecureDNSVC.tunnelIdentifier) {
+                //                            manager = m
+                //                            break
+                //                        }
+                //                    }
+                //                }
                 
                 if (manager == nil) {
                     manager = NETunnelProviderManager()
@@ -385,19 +376,9 @@ private extension SecureDNSVC{
     
     //MARK:- Add Observers
     func addObserver(){
-        NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { _ in
-            self.viewModel.register {
-                async {
-                    self.loadData()
-                }
-            }
-        }
+        
         NotificationCenter.default.addObserver(forName: .NEVPNStatusDidChange, object: nil, queue: .main) { _ in
-            if self.viewModel.isActive{
-                self.checkVPNStatus()
-            }else{
-                self.getPremiumValidity()
-            }
+            self.checkVPNStatus()
             
         }
     }
@@ -414,6 +395,8 @@ private extension SecureDNSVC{
         }
         print("VPNStatusDidChange: \(status.rawValue)")
         self.status = status
+        //TODO:- JITENDRA- IF Already
+        
     }
     
 }

@@ -146,7 +146,7 @@ class CBDSNViewModel:NSObject{
             guard kUserData?.downloadableConfig == true else {
                 return
             }
-            NetworkStatus.shared.showHud(progressMode: .HorizontalBar, message: "Downloading config file...")
+            NetworkStatus.shared.showHud(progressMode: .HorizontalBar,hudPosition: .bottom, message: "Downloading config file...")
             CBServer.shared.downloadTask(endpoint: .ovpnConfigFile(udid: uuid), completion: {result  in
                 async {
                     NetworkStatus.shared.hideHud()
@@ -194,7 +194,7 @@ extension CBDSNViewModel{
     var alertString:String{
         guard let vl = kUserData else { return "Get unlimited access to Premium features, \n Please buy the monthly subscription."}
         if vl.isTrail {
-            return "Get Premium features Free trail for:\n" + "\(vl.daysLeft)" + " days remaining"
+            return "Get Premium features Free Trial for:\n" + "\(vl.daysLeft)" + " days remaining"
         }else{
             return "Get unlimited access to Premium features, \n Please buy the monthly subscription."
         }
