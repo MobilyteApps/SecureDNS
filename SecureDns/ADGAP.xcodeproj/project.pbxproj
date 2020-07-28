@@ -49,6 +49,7 @@
 		7DA19A6724B4D57C00382411 /* iosv1.ovpn in Resources */ = {isa = PBXBuildFile; fileRef = 7DA19A6624B4D57C00382411 /* iosv1.ovpn */; };
 		7DE7E3EB24C9465400374A7F /* tldlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE7E3EA24C9465400374A7F /* tldlist.swift */; };
 		7DE7E3ED24C9530500374A7F /* VPNConnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE7E3EC24C9530500374A7F /* VPNConnect.swift */; };
+		7DE8D55924D09DA80053EEEB /* SupportVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE8D55824D09DA80053EEEB /* SupportVC.swift */; };
 		913C2B4424B513FC0051B6E0 /* SecureDNSVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913C2B4324B513FC0051B6E0 /* SecureDNSVC.swift */; };
 		913C2B4E24B51E6D0051B6E0 /* RegisterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913C2B4D24B51E6D0051B6E0 /* RegisterModel.swift */; };
 		913C2B5624B51E910051B6E0 /* VPNKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913C2B5324B51E910051B6E0 /* VPNKeychain.swift */; };
@@ -138,6 +139,7 @@
 		7DA19A6624B4D57C00382411 /* iosv1.ovpn */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = iosv1.ovpn; sourceTree = "<group>"; };
 		7DE7E3EA24C9465400374A7F /* tldlist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tldlist.swift; sourceTree = "<group>"; };
 		7DE7E3EC24C9530500374A7F /* VPNConnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNConnect.swift; sourceTree = "<group>"; };
+		7DE8D55824D09DA80053EEEB /* SupportVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportVC.swift; sourceTree = "<group>"; };
 		913C2B4324B513FC0051B6E0 /* SecureDNSVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureDNSVC.swift; sourceTree = "<group>"; };
 		913C2B4824B518150051B6E0 /* Reachability.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Reachability.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		913C2B4A24B51A0B0051B6E0 /* Reachability.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Reachability.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -356,6 +358,7 @@
 			children = (
 				913C2B4324B513FC0051B6E0 /* SecureDNSVC.swift */,
 				7D99742324C0B98800D45A6C /* PaymentVC.swift */,
+				7DE8D55824D09DA80053EEEB /* SupportVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -685,6 +688,7 @@
 				7D11300F24BF6F3500E7B704 /* String+Ex.swift in Sources */,
 				913C2B5624B51E910051B6E0 /* VPNKeychain.swift in Sources */,
 				7D72D27B24BE087D00A20227 /* Bundle+Ex.swift in Sources */,
+				7DE8D55924D09DA80053EEEB /* SupportVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -886,7 +890,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "BasicTunnelExtension-iOS/BasicTunnelExtension-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.0.2;
+				CURRENT_PROJECT_VERSION = 1.0.3;
 				DEVELOPMENT_TEAM = CSP53R6N9W;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "BasicTunnelExtension-iOS/Info.plist";
@@ -905,7 +909,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "BasicTunnelExtension-iOS/BasicTunnelExtension-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.0.2;
+				CURRENT_PROJECT_VERSION = 1.0.3;
 				DEVELOPMENT_TEAM = CSP53R6N9W;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "BasicTunnelExtension-iOS/Info.plist";

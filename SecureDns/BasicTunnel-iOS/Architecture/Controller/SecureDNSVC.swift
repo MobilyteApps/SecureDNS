@@ -55,8 +55,8 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
             default:
                 break
             }
-            self.currentManager?.isOnDemandEnabled = isOn
-            self.currentManager?.isEnabled = isOn
+            //self.currentManager?.isOnDemandEnabled = isOn
+            // self.currentManager?.isEnabled = isOn
             self.connectionStatuslbl.text = statusText
             self.conntectionStatusSwitch.setOn(isOn, animated: true)
         }
@@ -64,7 +64,9 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     fileprivate var viewModel:CBDSNViewModel{
         return CBDSNViewModel.shared
     }
-    
+    override var preferredStatusBarStyle: UIStatusBarStyle{
+        return .lightContent
+    }
     //MARK:- UIView LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -151,32 +153,7 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
         self.present(activityVC, animated: true, completion: nil)
         
     }
-    @IBAction func onReport(_ sender: UIButton) {
-        
-        self.showAlertAction(title: "Report bugs", message: "Do you want to report bugs or websites that have been wrongfully blocked?", cancelTitle: "NO", otherTitle: "YES") { index in
-            if index == 2{
-                let subject:String = (!Bundle.kAppTitle.isEmpty && !Bundle.kAppVersionString.isEmpty && !Bundle.kBuildNumber.isEmpty) ? "Report bugs for \(Bundle.kAppTitle), version:\(Bundle.kAppVersionString),Build:\(Bundle.kBuildNumber)" :"Report bugs "
-                CBMailComposer.shared.setBccRecipients(["Adgap@gmail.com"])
-                    .setSubject(subject)
-                    .setMessageBody("<p>This is message text.</p>", isHTML: true)
-                    .showMail(self) { result in
-                        async {
-                            switch result{
-                            case .success(let vl):
-                                switch vl {
-                                case .sent:
-                                    alertMessage = "Mail successfully sent"
-                                default:break
-                                }
-                            case .failure(let err):
-                                alertMessage = "Mail sent failure: \(err.localizedDescription)"
-                            }
-                        }
-                }
-                
-            }
-        }
-    }
+    
     
     // MARK: - Navigation
     
@@ -247,27 +224,7 @@ private extension SecureDNSVC{
         
     }
     //MARK:- connect
-    func enableVPN(manager:NETunnelProviderManager){
-        ///`isEanble`:Boolean for enable to create VPN
-        manager.isEnabled = true
-        ///`enabledOnDemandConnect`: Boleean
-        manager.isOnDemandEnabled = true
-        //        //Set rules
-        //        var rules = [NEOnDemandRule]()
-        //        let rule = NEOnDemandRuleConnect()
-        //        rule.interfaceTypeMatch = .any
-        //        rules.append(rule)
-        //        manager.onDemandRules = rules
-        // TLDList is a struct I created in its own swift file that has an array of all top level domains
-        let evaluationRule = NEEvaluateConnectionRule(matchDomains: TLDList.tlds,
-                                                      andAction: NEEvaluateConnectionRuleAction.connectIfNeeded)
-        
-        evaluationRule.useDNSServers =  useDNSServers
-        let onDemandRule = NEOnDemandRuleEvaluateConnection()
-        onDemandRule.connectionRules = [evaluationRule]
-        onDemandRule.interfaceTypeMatch = .any
-        manager.onDemandRules = [onDemandRule]
-    }
+    
     func connect() {
         if viewModel.configFileURL != nil {
             
@@ -278,7 +235,9 @@ private extension SecureDNSVC{
                     print("configure error: \(error)")
                     return
                 }else if let manager  = self.currentManager {
-                    self.enableVPN(manager: manager)
+                    ///`isEanble`:Boolean for enable to create VPN
+                    manager.isEnabled = true
+                   // self.onConnection(true)
                     if let session = manager.connection as? NETunnelProviderSession{
                         do {
                             try session.startTunnel()
@@ -316,6 +275,33 @@ private extension SecureDNSVC{
             
         })
     }
+    
+    //MARK:- setsOnDemandVPN
+    func setsOnDemandVPN(_ isOnDemandEnabled:Bool = false){
+        guard let manager = currentManager else { return  }
+        ///`enabledOnDemandConnect`: Boleean
+        //manager.isOnDemandEnabled = isOnDemandEnabled
+        if isOnDemandEnabled {
+            if manager.onDemandRules == nil {
+                let evaluationRule = NEEvaluateConnectionRule(matchDomains: TLDList.tlds,andAction: NEEvaluateConnectionRuleAction.connectIfNeeded)
+                evaluationRule.useDNSServers =  useDNSServers
+                let onDemandRule = NEOnDemandRuleEvaluateConnection()
+                onDemandRule.connectionRules = [evaluationRule]
+                onDemandRule.interfaceTypeMatch = .any
+                manager.onDemandRules = [onDemandRule]
+               // manager.isOnDemandEnabled = false
+            }
+            if manager.connection.status != .connected {
+                manager.isOnDemandEnabled = false
+            }
+          
+            
+        }else{
+            manager.onDemandRules = nil
+        }
+       
+        
+    }
     //MARK:- configureVPN
     func configureVPN(_ configure: @escaping (NETunnelProviderManager) -> NETunnelProviderProtocol?, completionHandler: @escaping (Error?) -> Void) {
         reloadCurrentManager { (error) in
@@ -329,7 +315,9 @@ private extension SecureDNSVC{
             if let protocolConfiguration = configure(manager) {
                 manager.protocolConfiguration = protocolConfiguration
             }
-            self.enableVPN(manager: manager)
+            ///`isEanble`:Boolean for enable to create VPN
+            manager.isEnabled = true
+            self.setsOnDemandVPN(manager.isOnDemandEnabled)
             manager.saveToPreferences { (error) in
                 if let error = error {
                     print("error saving preferences: \(error)")
@@ -377,7 +365,7 @@ private extension SecureDNSVC{
     //MARK:- Add Observers
     func addObserver(){
         
-        NotificationCenter.default.addObserver(forName: .NEVPNStatusDidChange, object: nil, queue: .main) { _ in
+        NotificationCenter.default.addObserver(forName: .NEVPNStatusDidChange, object: nil, queue: .main) { noti in
             self.checkVPNStatus()
             
         }
@@ -395,7 +383,7 @@ private extension SecureDNSVC{
         }
         print("VPNStatusDidChange: \(status.rawValue)")
         self.status = status
-        //TODO:- JITENDRA- IF Already
+        
         
     }
     
