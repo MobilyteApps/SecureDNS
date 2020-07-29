@@ -642,8 +642,7 @@ public class JKIndicatorView: UIView {
     }
     // MARK: -startAnimation
     
-    public func startAnimation()
-    {
+    public func startAnimation(){
         self.animating = true
         self.circleLayer.add(self.strokeLineAnimation, forKey: "strokeLineAnimation")
         self.circleLayer.add(self.rotationAnimation, forKey: "rotationAnimation")

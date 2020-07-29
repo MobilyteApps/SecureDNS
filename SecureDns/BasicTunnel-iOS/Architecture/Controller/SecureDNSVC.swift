@@ -15,50 +15,47 @@ var KConnected:NEVPNStatus{
             UserDefaults.removeObject(forKey: kVPNConectedKey)
             return
         }
-        UserDefaults.set(integer: newValue.rawValue, forKey: kVPNConectedKey)//set(boolValue: newValue, forKey: kVPNConectedKey)
+        UserDefaults.set(integer: newValue.rawValue, forKey: kVPNConectedKey)
     }
     get{
         let vl = UserDefaults.getInteger(forKey: kVPNConectedKey)
         guard let st = NEVPNStatus(rawValue: vl) else { return .invalid }
-        return st//getBool(forKey: kVPNConectedKey)
+        return st
     }
 }
 class SecureDNSVC: UIViewController, URLSessionDataDelegate {
-    @IBOutlet fileprivate var conntectionStatusSwitch: UISwitch!
-    @IBOutlet fileprivate var connectionStatuslbl: UILabel!
+    @IBOutlet fileprivate var switchBtn: UISwitch!
+    @IBOutlet fileprivate var statuslbl: UILabel!
+    @IBOutlet fileprivate var statusDetaillbl: UILabel!
     @IBOutlet fileprivate var connectionBtn: UIButton!
     @IBOutlet fileprivate var leftTrailDayslbl: UILabel!
     @IBOutlet fileprivate var upgradeBtn: UIButton!
+    @IBOutlet fileprivate var indicator: JKIndicatorView!
+    
     fileprivate var currentManager: NETunnelProviderManager?
     fileprivate var useDNSServers:[String]?
+    
+    fileprivate var isAnimating:Bool = false{
+        didSet{
+            if isAnimating {
+                indicator.isHidden = false
+                indicator.startAnimation()
+            }else{
+                indicator.stopAnimation()
+                indicator.isHidden = true
+            }
+            
+        }
+    }
     fileprivate var status: NEVPNStatus = .invalid{
         didSet{
-            var isOn:Bool = false
-            
-            var statusText:String = "Connect"
-            switch status {
-            case  .connecting:
-                statusText = "Connecting..."
-                isOn = false
-                KConnected = status
-            case .connected:
-                statusText = "Connected"
-                isOn = true
-                KConnected = status
-            case .disconnected:
-                statusText = "Connect"//"Disconnected"
-                isOn = false
-            case .disconnecting:
-                statusText = "Disconnecting..."
-                isOn = false
-                
-            default:
-                break
-            }
-            //self.currentManager?.isOnDemandEnabled = isOn
-            // self.currentManager?.isEnabled = isOn
-            self.connectionStatuslbl.text = statusText
-            self.conntectionStatusSwitch.setOn(isOn, animated: true)
+            KConnected = status
+            let isOn:Bool = (status == .connected || status == .connecting || status == .reasserting) ? true : false
+            self.statuslbl.text = status.title.uppercased()
+            statusDetaillbl.text = status.description
+            isAnimating = (status == .connecting || status == .reasserting) ? true : false
+            self.switchBtn.setOn(isOn, animated: true)
+            self.switchBtn.onTintColor = switchBtn.isOn ? UIColor.greenColor:UIColor.offColor
         }
     }
     fileprivate var viewModel:CBDSNViewModel{
@@ -71,7 +68,8 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         //resetPref()
-        conntectionStatusSwitch.set(width: 130, height: 75)
+        self.status = .invalid
+        switchBtn.set(width: 130, height: 75)
         addObserver()
         getPremiumValidity()
         reloadCurrentManager()
@@ -237,7 +235,7 @@ private extension SecureDNSVC{
                 }else if let manager  = self.currentManager {
                     ///`isEanble`:Boolean for enable to create VPN
                     manager.isEnabled = true
-                   // self.onConnection(true)
+                    // self.onConnection(true)
                     if let session = manager.connection as? NETunnelProviderSession{
                         do {
                             try session.startTunnel()
@@ -289,17 +287,17 @@ private extension SecureDNSVC{
                 onDemandRule.connectionRules = [evaluationRule]
                 onDemandRule.interfaceTypeMatch = .any
                 manager.onDemandRules = [onDemandRule]
-               // manager.isOnDemandEnabled = false
+                //manager.isOnDemandEnabled = false
             }
-            if manager.connection.status != .connected {
-                manager.isOnDemandEnabled = false
-            }
-          
+            //            if manager.connection.status != .connected {
+            //                manager.isOnDemandEnabled = false
+            //            }
+            
             
         }else{
             manager.onDemandRules = nil
         }
-       
+        
         
     }
     //MARK:- configureVPN
@@ -317,7 +315,7 @@ private extension SecureDNSVC{
             }
             ///`isEanble`:Boolean for enable to create VPN
             manager.isEnabled = true
-            self.setsOnDemandVPN(manager.isOnDemandEnabled)
+            self.setsOnDemandVPN(true)
             manager.saveToPreferences { (error) in
                 if let error = error {
                     print("error saving preferences: \(error)")
@@ -388,17 +386,32 @@ private extension SecureDNSVC{
     }
     
 }
-extension UISwitch {
-    func set(width: CGFloat, height: CGFloat) {
-        
-        let standardHeight: CGFloat = 31
-        let standardWidth: CGFloat = 51
-        
-        let heightRatio = height / standardHeight
-        let widthRatio = width / standardWidth
-        
-        transform = CGAffineTransform(scaleX: widthRatio, y: heightRatio)
+
+
+extension NEVPNStatus:CustomStringConvertible{
+    var title:String{
+        switch self {
+        case .disconnected,.invalid: return "disconnected"
+        case .connecting: return "connecting"
+        case .connected: return "connected"
+        case .reasserting: return "reconnecting"
+        case .disconnecting: return "disconnecting"
+         default:
+           return ""
+        }
     }
+    public var description: String {
+        switch self {
+        case .disconnected: return ""
+        case .connecting,.reasserting: return "Securing your connection..."
+        case .connected: return "Your Internet is Private."
+        case .disconnecting: return "Your Internet is not Private."
+        default:
+            //invalid
+            return "\(kAppTitle) is not configured on your device."
+        }
+    }
+    
+    
+    
 }
-
-

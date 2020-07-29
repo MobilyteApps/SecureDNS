@@ -19,7 +19,7 @@ class PaymentVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         termAndPolicyConfig()
-        
+        purchaseBtn.backgroundColor = UIColor.greenColor
         
     }
     override var preferredStatusBarStyle: UIStatusBarStyle{

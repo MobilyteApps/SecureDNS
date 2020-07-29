@@ -105,6 +105,16 @@ extension UIViewController{
 }
 public extension UIColor{
     class var blueColor3:UIColor {return #colorLiteral(red: 0.1019607843, green: 0.1176470588, blue: 0.2392156863, alpha: 1)}
+    class var offColor:UIColor {
+        return UIColor(named: "offColor")!
+    }
+    class var greenColor:UIColor{
+        if #available(iOS 13, *) {
+            return .systemGray
+        }else{
+            return #colorLiteral(red: 0.2039215686, green: 0.7803921569, blue: 0.3490196078, alpha: 1)
+        }
+    }
 }
 extension UINavigationController {
     open override var childForStatusBarStyle: UIViewController? {
