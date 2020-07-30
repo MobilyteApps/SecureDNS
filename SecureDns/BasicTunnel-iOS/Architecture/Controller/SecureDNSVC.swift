@@ -402,8 +402,8 @@ extension NEVPNStatus:CustomStringConvertible{
         switch self {
         case .disconnected: return ""
         case .connecting,.reasserting: return "Securing your connection..."
-        case .connected: return "Your Internet is Private."
-        case .disconnecting: return "Your Internet is not Private."
+        case .connected: return "Your Internet is Protected."
+        case .disconnecting: return "Your Internet is not Protected."
         default:
             //invalid
             return "\(kAppTitle) is not configured on your device."

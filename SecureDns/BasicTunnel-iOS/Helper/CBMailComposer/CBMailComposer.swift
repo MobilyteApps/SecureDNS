@@ -20,7 +20,7 @@ class CBMailComposer: NSObject {
     }()
     private override init() {
         super.init()
-        mailController.delegate = self
+        mailController.mailComposeDelegate = self
     }
     class var shared:CBMailComposer {
         struct Singlton{
@@ -30,41 +30,65 @@ class CBMailComposer: NSObject {
     }
     
     func setSubject(_ subject: String)->CBMailComposer{
-        mailController.setSubject(subject)
+        if canSendMail {
+             mailController.setSubject(subject)
+        }
+       
         return self
     }
     func setToRecipients(_ toRecipients:[String]?)->CBMailComposer{
-        mailController.setToRecipients(toRecipients)
+        if canSendMail {
+             mailController.setToRecipients(toRecipients)
+        }
+       
         return self
     }
     func setCcRecipients(_ ccRecipients: [String]?)->CBMailComposer{
-        mailController.setCcRecipients(ccRecipients)
+        if canSendMail {
+            mailController.setCcRecipients(ccRecipients)
+        }
+        
         return self
     }
     func setBccRecipients(_ bccRecipients: [String]?)->CBMailComposer{
-        mailController.setBccRecipients(bccRecipients)
+        if canSendMail {
+            mailController.setBccRecipients(bccRecipients)
+        }
+        
         return self
     }
     func setMessageBody(_ body: String, isHTML: Bool)->CBMailComposer{
-        mailController.setMessageBody(body, isHTML: isHTML)
+        if canSendMail {
+             mailController.setMessageBody(body, isHTML: isHTML)
+        }
+       
         return self
     }
     func addAttachmentData(_ attachment: Data, mimeType: String, fileName filename: String)->CBMailComposer{
-        mailController.addAttachmentData(attachment, mimeType: mimeType, fileName: filename)
+        if canSendMail {
+             mailController.addAttachmentData(attachment, mimeType: mimeType, fileName: filename)
+        }
+       
         return self
     }
     func setPreferredSendingEmailAddress(_ emailAddress: String)->CBMailComposer{
-        mailController.setPreferredSendingEmailAddress(emailAddress)
+        if canSendMail {
+             mailController.setPreferredSendingEmailAddress(emailAddress)
+        }
+       
         return self
     }
-    
+    var canSendMail:Bool{
+        return MFMailComposeViewController.canSendMail()
+    }
     
     func showMail(_ controller:UIViewController,completion:@escaping CBMailComposerHandler){
         completionHandler = completion
-        if MFMailComposeViewController.canSendMail() {
+        if canSendMail {
             controller.present(mailController, animated:true, completion: nil)
         }else{
            // alertMessage =  "Please configure email account first."
+            
         }
     }
     
@@ -72,7 +96,8 @@ class CBMailComposer: NSObject {
     
 }
 
-extension CBMailComposer:MFMailComposeViewControllerDelegate, UINavigationControllerDelegate{
+extension CBMailComposer:MFMailComposeViewControllerDelegate{
+    
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
       
         controller.dismiss(animated: true) {

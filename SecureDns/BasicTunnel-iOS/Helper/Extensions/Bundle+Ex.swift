@@ -49,7 +49,7 @@ extension Bundle{
         }
     }
     static var kAppVersionString: String{
-        guard let version = bundle.object(forInfoDictionaryKey: String(kCFBundleVersionKey)) as? String else{return ""}
+        guard let version = bundle.object(forInfoDictionaryKey: String("CFBundleShortVersionString")) as? String else{return ""}
         return version
     }
     static var kBuildNumber: String{

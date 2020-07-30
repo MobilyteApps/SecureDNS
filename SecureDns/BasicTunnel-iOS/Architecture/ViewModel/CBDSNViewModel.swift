@@ -192,11 +192,11 @@ extension CBDSNViewModel{
         
     }
     var alertString:String{
-        guard let vl = kUserData else { return "Get unlimited access to Premium features, \n Please buy the monthly subscription."}
+        guard let vl = kUserData else { return "Get Premium features,\n Please purchase the monthly subscription."}
         if vl.isTrail {
             return "Get Premium features Free Trial for:\n" + "\(vl.daysLeft)" + " days remaining"
         }else{
-            return "Get unlimited access to Premium features, \n Please buy the monthly subscription."
+            return "Get Premium features,\n Please purchase the monthly subscription."
         }
     }
     var productTitle:String{
