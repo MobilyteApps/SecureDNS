@@ -23,7 +23,7 @@ var KConnected:NEVPNStatus{
         return st
     }
 }
-class SecureDNSVC: UIViewController, URLSessionDataDelegate {
+class SecureDNSVC: UIViewController{
     @IBOutlet fileprivate var switchBtn: UISwitch!
     @IBOutlet fileprivate var statuslbl: UILabel!
     @IBOutlet fileprivate var statusDetaillbl: UILabel!
@@ -31,8 +31,9 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     @IBOutlet fileprivate var leftTrailDayslbl: UILabel!
     @IBOutlet fileprivate var upgradeBtn: UIButton!
     @IBOutlet fileprivate var indicator: JKIndicatorView!
-    
-    fileprivate var currentManager: NETunnelProviderManager?
+    fileprivate lazy var currentManager: NETunnelProviderManager = {
+        return NETunnelProviderManager()
+    }()
     fileprivate var useDNSServers:[String]?
     
     fileprivate var isAnimating:Bool = false{
@@ -52,10 +53,11 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
             KConnected = status
             let isOn:Bool = (status == .connected || status == .connecting || status == .reasserting) ? true : false
             self.statuslbl.text = status.title.uppercased()
+            self.statuslbl.textColor = status.titleColor
             statusDetaillbl.text = status.description
             isAnimating = (status == .connecting || status == .reasserting) ? true : false
             self.switchBtn.setOn(isOn, animated: true)
-            self.switchBtn.onTintColor = switchBtn.isOn ? UIColor.greenColor:UIColor.offColor
+            
         }
     }
     fileprivate var viewModel:CBDSNViewModel{
@@ -68,6 +70,9 @@ class SecureDNSVC: UIViewController, URLSessionDataDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         //resetPref()
+        self.switchBtn.onTintColor =  .greenColor
+        self.switchBtn.tintColor = .offColor
+        self.upgradeBtn.backgroundColor = .greenColor
         self.status = .invalid
         switchBtn.set(width: 130, height: 75)
         addObserver()
@@ -232,7 +237,8 @@ private extension SecureDNSVC{
                 if let error = error {
                     print("configure error: \(error)")
                     return
-                }else if let manager  = self.currentManager {
+                }else{
+                    let manager  = self.currentManager
                     ///`isEanble`:Boolean for enable to create VPN
                     manager.isEnabled = true
                     // self.onConnection(true)
@@ -268,7 +274,7 @@ private extension SecureDNSVC{
             if let err = error{
                 print(err.localizedDescription)
             }
-            self.currentManager?.connection.stopVPNTunnel()
+            self.currentManager.connection.stopVPNTunnel()
             
             
         })
@@ -276,17 +282,17 @@ private extension SecureDNSVC{
     
     //MARK:- setsOnDemandVPN
     func setsOnDemandVPN(_ isOnDemandEnabled:Bool = false){
-        guard let manager = currentManager else { return  }
+        // guard let manager = currentManager else { return  }
         ///`enabledOnDemandConnect`: Boleean
         //manager.isOnDemandEnabled = isOnDemandEnabled
         if isOnDemandEnabled {
-            if manager.onDemandRules == nil {
+            if currentManager.onDemandRules == nil {
                 let evaluationRule = NEEvaluateConnectionRule(matchDomains: TLDList.tlds,andAction: NEEvaluateConnectionRuleAction.connectIfNeeded)
                 evaluationRule.useDNSServers =  useDNSServers
                 let onDemandRule = NEOnDemandRuleEvaluateConnection()
                 onDemandRule.connectionRules = [evaluationRule]
                 onDemandRule.interfaceTypeMatch = .any
-                manager.onDemandRules = [onDemandRule]
+                currentManager.onDemandRules = [onDemandRule]
                 //manager.isOnDemandEnabled = false
             }
             //            if manager.connection.status != .connected {
@@ -295,7 +301,7 @@ private extension SecureDNSVC{
             
             
         }else{
-            manager.onDemandRules = nil
+            currentManager.onDemandRules = nil
         }
         
         
@@ -309,7 +315,7 @@ private extension SecureDNSVC{
                 return
             }
             
-            let manager = self.currentManager!
+            let manager = self.currentManager
             if let protocolConfiguration = configure(manager) {
                 manager.protocolConfiguration = protocolConfiguration
             }
@@ -334,25 +340,16 @@ private extension SecureDNSVC{
                 completionHandler?(error)
                 
             }else if let managers = managers{
-                var manager: NETunnelProviderManager?
+                //var manager: NETunnelProviderManager?
                 if let m = managers.first(where: {$0.protocolConfiguration?.isKind(of: NETunnelProviderProtocol.self) == true}), let p = m.protocolConfiguration as? NETunnelProviderProtocol, p.providerBundleIdentifier == SecureDNSVC.tunnelIdentifier{
-                    manager = m
+                    self.currentManager = m
                 }
-                //                for m in managers {
-                //                    if let p = m.protocolConfiguration as? NETunnelProviderProtocol {
-                //                        if (p.providerBundleIdentifier == SecureDNSVC.tunnelIdentifier) {
-                //                            manager = m
-                //                            break
-                //                        }
-                //                    }
+                //                if (manager == nil) {
+                //                    manager = NETunnelProviderManager()
                 //                }
                 
-                if (manager == nil) {
-                    manager = NETunnelProviderManager()
-                }
-                
-                self.currentManager = manager
-                self.status = manager!.connection.status
+                // self.currentManager = manager
+                self.status =  self.currentManager.connection.status
                 completionHandler?(nil)
             }
             
@@ -375,12 +372,13 @@ private extension SecureDNSVC{
     }
     //MARK:- checkVPNStatus
     func checkVPNStatus(){
-        guard let status = currentManager?.connection.status else {
-            print("VPNStatusDidChange")
-            return
-        }
-        print("VPNStatusDidChange: \(status.rawValue)")
-        self.status = status
+        //        guard let status = currentManager.connection.status else {
+        //            print("VPNStatusDidChange")
+        //            return
+        //        }
+        self.status = currentManager.connection.status
+        print("VPNStatusDidChange: \(self.status.title)")
+        
         
         
     }
@@ -396,8 +394,8 @@ extension NEVPNStatus:CustomStringConvertible{
         case .connected: return "connected"
         case .reasserting: return "reconnecting"
         case .disconnecting: return "disconnecting"
-         default:
-           return ""
+        default:
+            return ""
         }
     }
     public var description: String {
@@ -409,6 +407,13 @@ extension NEVPNStatus:CustomStringConvertible{
         default:
             //invalid
             return "\(kAppTitle) is not configured on your device."
+        }
+    }
+    var titleColor:UIColor{
+        switch self {
+        case .connected: return .greenColor
+        default:
+            return .white
         }
     }
     
