@@ -192,11 +192,12 @@ extension CBDSNViewModel{
         
     }
     var alertString:String{
-        guard let vl = kUserData else { return "Get Premium features,\n Please purchase the monthly subscription."}
+        guard let vl = kUserData else { return "Your free trial has ended.\n Please click on subscribe here to subscribe monthly subscription."}
         if vl.isTrail {
-            return "Get Premium features Free Trial for:\n" + "\(vl.daysLeft)" + " days remaining"
+            return "Click on subscribe here to subscribe free trial ends in \(vl.daysLeft) days."
         }else{
-            return "Get Premium features,\n Please purchase the monthly subscription."
+            return "Your free trial has ended.\n Please click on subscribe here to subscribe monthly subscription."
+            
         }
     }
     var productTitle:String{
@@ -210,3 +211,4 @@ extension CBDSNViewModel{
         return iapProduct?.localizedPrice ?? "$2.99/ month"
     }
 }
+

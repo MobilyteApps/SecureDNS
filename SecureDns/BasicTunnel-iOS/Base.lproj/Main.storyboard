@@ -146,15 +146,15 @@
                                 </constraints>
                             </stackView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tjJ-Yj-4nr">
-                                <rect key="frame" x="10" y="614.33333333333337" width="355" height="133.66666666666663"/>
+                                <rect key="frame" x="10" y="597.66666666666663" width="355" height="150.33333333333337"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="I1s-Bh-GcY">
-                                        <rect key="frame" x="15" y="15.000000000000007" width="325" height="103.66666666666669"/>
+                                        <rect key="frame" x="15" y="14.999999999999993" width="325" height="120.33333333333331"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="249" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qeW-7G-6qs">
-                                                <rect key="frame" x="0.0" y="0.0" width="325" height="33.666666666666664"/>
-                                                <string key="text">Get Premium features
-Please purchase the monthly subscription.</string>
+                                                <rect key="frame" x="0.0" y="0.0" width="325" height="50.333333333333336"/>
+                                                <string key="text">Your free trial has ended.  
+Please click on subscribe here to subscribe monthly subscription</string>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <color key="textColor" systemColor="systemGray5Color" red="0.8980392157" green="0.8980392157" blue="0.91764705879999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
@@ -163,7 +163,7 @@ Please purchase the monthly subscription.</string>
                                                 </variation>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="XSe-LP-rOx">
-                                                <rect key="frame" x="0.0" y="48.666666666666629" width="325" height="55"/>
+                                                <rect key="frame" x="0.0" y="65.333333333333371" width="325" height="55"/>
                                                 <color key="backgroundColor" name="onColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="55" id="8eR-Ux-c4h"/>
