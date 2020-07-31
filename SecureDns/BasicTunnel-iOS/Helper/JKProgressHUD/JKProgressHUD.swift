@@ -177,7 +177,7 @@ public class JKProgressHUD:UIView{
         }
         guard let hudContentView = hudContentView else {return}
         var heightConstant:CGFloat = 0.0
-        var widthConstant:CGFloat = 200
+        var widthConstant:CGFloat = Platform.isPhone ? UIScreen.main.bounds.width*0.83 : UIScreen.main.bounds.width*0.25
         
         switch hudMode {
         case .HorizontalBar:
@@ -237,7 +237,7 @@ public class JKProgressHUD:UIView{
             systemBarIndicator.progressTintColor = progressColor
             systemBarIndicator.trackTintColor =  #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
             systemBarIndicator.progress = 0
-            systemBarIndicator.cornerRadius = 2.5
+            systemBarIndicator.cornerRadius = 2
             systemBarIndicator.clipsToBound = true
             systemBarIndicator.masksToBounds = true
             if showBarline {
@@ -251,8 +251,8 @@ public class JKProgressHUD:UIView{
             [
                 systemBarIndicator.leadingAnchor.constraint(equalTo: hudContentView.leadingAnchor, constant: 10),
                 systemBarIndicator.trailingAnchor.constraint(equalTo: hudContentView.trailingAnchor, constant: -10),
-                systemBarIndicator.heightAnchor.constraint(equalToConstant: 10),
-                messageString.isEmpty == true ? systemBarIndicator.centerYAnchor.constraint(equalTo: hudContentView.centerYAnchor, constant: 0):systemBarIndicator.topAnchor.constraint(equalTo: hudContentView.topAnchor, constant: 5)
+                systemBarIndicator.heightAnchor.constraint(equalToConstant: systemBarIndicator.cornerRadius*2),
+                messageString.isEmpty == true ? systemBarIndicator.centerYAnchor.constraint(equalTo: hudContentView.centerYAnchor, constant: 0):systemBarIndicator.topAnchor.constraint(equalTo: hudContentView.topAnchor, constant:10)
                 
                 ].forEach({$0.isActive = true})
             systemBarIndicator.setNeedsDisplay()

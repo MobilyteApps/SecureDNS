@@ -2,14 +2,13 @@
 //  APIManager.swift
 //  Secure DNS
 //
-//  Created by Harsh Rajput on 04/06/20.
-//  Copyright © 2020 Harsh Rajput. All rights reserved.
+//  Created by Jitendra Kumar on 04/06/20.
+//  Copyright © 2020 Jitendra Kumar. All rights reserved.
 //
 
 import UIKit
 
 class CBDSNViewModel:NSObject{
-    
     fileprivate var iapProduct:IAPProduct?
     var configFileURL:URL?
     static let shared = CBDSNViewModel()
@@ -20,7 +19,7 @@ class CBDSNViewModel:NSObject{
     }
     
     //MARK:- premiumValidate
-    func register(completion:@escaping()->Void){
+    func register(_ isLoader:Bool = true,completion:@escaping()->Void){
         kUserData = nil
         if kTrailData  == nil{
             let udid = UIDevice.current.identifierForVendor?.uuidString ?? ""
@@ -28,7 +27,10 @@ class CBDSNViewModel:NSObject{
             kTrailData = .init(uuidString: udid, timestamp: trailExpireDate.millisecondsSince1970)
         }
         guard NetworkStatus.shared.isConnected , let params = kTrailData?.jsonObject else{return}
-        NetworkStatus.shared.showHud()
+        if isLoader {
+            NetworkStatus.shared.showHud()
+        }
+        
         CBServer.shared.dataTask(.default, endpoint: .auth(.singUp), method: .post, parameters: params, encoding: .JSON, headers: nil) { (result) in
             async {
                 NetworkStatus.shared.hideHud()
@@ -42,7 +44,7 @@ class CBDSNViewModel:NSObject{
                         if kUserData?.downloadableConfig == true {
                             self.download(completion: completion)
                         }else{
-                           completion()
+                            completion()
                         }
                         
                     case .failure(let error):
@@ -85,7 +87,7 @@ class CBDSNViewModel:NSObject{
         }
     }
     //MARK:- verifyReceipt
-    func verifyReceipt(_ isLoader:Bool = true,product:IAPProduct,purchaseDetails:IAPPurchaseDetails?,completion:@escaping(Bool)->Void){
+    func verifyReceipt(_ isLoader:Bool = true,product:IAPProduct,purchaseDetails:IAPPurchaseDetails,completion:@escaping(Bool)->Void){
         self.iApManager.verifyPurchase(isLoader, product: product, purchaseDetails: purchaseDetails, completion: completion)
         
     }
@@ -136,16 +138,14 @@ class CBDSNViewModel:NSObject{
             NetworkStatus.shared.hideHud()
             return
         }
-    
+        
         let result = FileManager.getfile(filename: "\(uuid).ovpn")
         switch result {
         case .success(let url):
             configFileURL = url
             completion()
         default:
-            guard kUserData?.downloadableConfig == true else {
-                return
-            }
+            guard kUserData?.downloadableConfig == true else {return}
             NetworkStatus.shared.showHud(progressMode: .HorizontalBar,hudPosition: .bottom, message: "Downloading config file...")
             CBServer.shared.downloadTask(endpoint: .ovpnConfigFile(udid: uuid), completion: {result  in
                 async {
@@ -182,21 +182,31 @@ extension CBDSNViewModel{
         return vl.isValidService
     }
     var isActive:Bool{
-        if isValidService {
-            return true
-        }else if self.iApManager.verifySubscriptionResult?.isActive == true{
-            return true
-        }else{
-            return false
-        }
+        return isValidService
         
     }
+    var subscibeBtnText:String{
+        return isSubcribed ? "SUBSCRIPTION ACTIVE" :"SUBSCRIBE NOW"
+    }
+    var isSubcribed:Bool{
+        guard let vl = kUserData,vl.isSubscibed == true else { return false}
+        return true
+    }
+    
     var alertString:String{
-        guard let vl = kUserData else { return "Your free trial has ended.\n Please click on subscribe here to subscribe monthly subscription."}
+        guard let vl = kUserData else { return "Your free trial has ended.\n Please click here to subscribe to the Monthly Subscription."}
         if vl.isTrail {
             return "Click on subscribe here to subscribe free trial ends in \(vl.daysLeft) days."
-        }else{
-            return "Your free trial has ended.\n Please click on subscribe here to subscribe monthly subscription."
+        }else {
+            switch vl.status {
+            case .expired:
+                return "Your subscription has expired.\n Please click here to subscribe to the Monthly Subscription."
+            case .purchased:
+                return "Your Monthly Plan is Active.😊"
+            case .notPurchased:
+                return "Your free trial has ended.\n Please click here to subscribe to the Monthly Subscription."
+            }
+            
             
         }
     }

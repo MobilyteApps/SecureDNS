@@ -3,7 +3,7 @@
 //  ADGAP
 //
 //  Created by Jitendra Kumar on 14/07/20.
-//  Copyright © 2020 Davide De Rosa. All rights reserved.
+//  Copyright © 2020 Mobilyte Inc.. All rights reserved.
 //
 
 import Foundation

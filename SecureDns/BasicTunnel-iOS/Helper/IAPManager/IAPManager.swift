@@ -96,7 +96,7 @@ class IAPManager : NSObject{
     
     //MARK:- verifyPurchase
     
-    func verifyPurchase(_ isLoader:Bool = true, product: IAPProduct, purchaseDetails:IAPPurchaseDetails?,completion:@escaping(Bool)->Void) {
+    func verifyPurchase(_ isLoader:Bool = true, product: IAPProduct, purchaseDetails:IAPPurchaseDetails,completion:@escaping(Bool)->Void) {
         guard NetworkStatus.shared.isConnected, let productType = product.productType else {return}
         if isLoader {
             NetworkStatus.shared.showHud()
@@ -123,18 +123,21 @@ class IAPManager : NSObject{
                     }
                     
                     let subscriptionResult = SwiftyStoreKit.verifySubscription(ofType:subscriptionType,productId: productId,inReceipt: receipt)
-                    
-                    self.verifySubscriptionResult = IAPVerifySubscription(subscriptionResult: subscriptionResult,pruchaseDetail: purchaseDetails,receiptString:recieptData, product: product)
-                    
                     switch subscriptionResult {
                     case .purchased( let expiredDate,let receiptItem):
                         print("\(productId) is purchased: \(receiptItem) expiredDate \(expiredDate)")
+                         self.verifySubscriptionResult = IAPVerifySubscription(expiredDate: expiredDate, recieptsItems: receiptItem, purchaseDetail: purchaseDetails, receiptString: recieptData, product: product)
+                        self.verifySubscriptionResult?.status = .purchased
                         completion(true)
                     case .notPurchased:
                         print("The user has never purchased \(productId)")
+                         self.verifySubscriptionResult = nil
                         completion(false)
                     case .expired(let expiredDate,let receiptItem):
                         print("\(productId) is expired: \(receiptItem) expiredDate \(expiredDate)")
+                         self.verifySubscriptionResult = IAPVerifySubscription(expiredDate: expiredDate, recieptsItems: receiptItem, purchaseDetail: purchaseDetails, receiptString: recieptData, product: product)
+                        self.verifySubscriptionResult?.status = .expired
+                       
                         completion(false)
                         
                     }

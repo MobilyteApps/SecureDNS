@@ -2,8 +2,8 @@
 //  VPNKeychain.swift
 //  ADGAP
 //
-//  Created by Harsh Rajput on 04/06/20.
-//  Copyright © 2020 Harsh Rajput. All rights reserved.
+//  Created by Jitendra Kumar on 04/06/20.
+//  Copyright © 2020 Jitendra Kumar. All rights reserved.
 //
 
 import Foundation

@@ -2,8 +2,8 @@
 //  SecureDNSVC.swift
 //  Demo
 //
-//  Created by Harsh Rajput on 08/07/20.
-//  Copyright © 2020 Davide De Rosa. All rights reserved.
+//  Created by Jitendra Kumar on 08/07/20.
+//  Copyright © 2020 Mobilyte Inc. All rights reserved.
 //
 
 import UIKit
@@ -31,10 +31,11 @@ class SecureDNSVC: UIViewController{
     @IBOutlet fileprivate var leftTrailDayslbl: UILabel!
     @IBOutlet fileprivate var upgradeBtn: UIButton!
     @IBOutlet fileprivate var indicator: JKIndicatorView!
+    //fileprivate var useDNSServers:[String]?
     fileprivate lazy var currentManager: NETunnelProviderManager = {
         return NETunnelProviderManager()
     }()
-    fileprivate var useDNSServers:[String]?
+    
     
     fileprivate var isAnimating:Bool = false{
         didSet{
@@ -69,7 +70,7 @@ class SecureDNSVC: UIViewController{
     //MARK:- UIView LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        //resetPref()
+        resetPref()
         self.switchBtn.onTintColor =  .greenColor
         self.switchBtn.tintColor = .offColor
         self.upgradeBtn.backgroundColor = .greenColor
@@ -102,6 +103,8 @@ class SecureDNSVC: UIViewController{
     private func loadData(){
         self.leftTrailDayslbl.text = self.viewModel.alertString
         self.connectionBtn.isUserInteractionEnabled = self.viewModel.isActive
+        self.upgradeBtn.isEnabled = !self.viewModel.isSubcribed
+        self.upgradeBtn[title:.normal] = self.viewModel.subscibeBtnText
         self.checkVPNStatus()
         
     }
@@ -159,7 +162,7 @@ class SecureDNSVC: UIViewController{
     
     
     // MARK: - Navigation
-    
+   
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
@@ -197,7 +200,7 @@ private extension SecureDNSVC{
             
             var builder = OpenVPNTunnelProvider.ConfigurationBuilder(sessionConfiguration: configurationFileContent.configuration)
             builder.shouldDebug = true
-            useDNSServers = builder.sessionConfiguration.dnsServers
+           // useDNSServers = builder.sessionConfiguration.dnsServers
             //builder.masksPrivateData = false
             let configuration = builder.build()
             return try configuration.generatedTunnelProtocol(withBundleIdentifier: SecureDNSVC.tunnelIdentifier, appGroup: SecureDNSVC.appGroup)
@@ -281,10 +284,9 @@ private extension SecureDNSVC{
     }
     
     //MARK:- setsOnDemandVPN
-    func setsOnDemandVPN(_ isOnDemandEnabled:Bool = false){
+   /* func setsOnDemandVPN(_ isOnDemandEnabled:Bool = false){
         // guard let manager = currentManager else { return  }
         ///`enabledOnDemandConnect`: Boleean
-        //manager.isOnDemandEnabled = isOnDemandEnabled
         if isOnDemandEnabled {
             if currentManager.onDemandRules == nil {
                 let evaluationRule = NEEvaluateConnectionRule(matchDomains: TLDList.tlds,andAction: NEEvaluateConnectionRuleAction.connectIfNeeded)
@@ -305,7 +307,7 @@ private extension SecureDNSVC{
         }
         
         
-    }
+    }*/
     //MARK:- configureVPN
     func configureVPN(_ configure: @escaping (NETunnelProviderManager) -> NETunnelProviderProtocol?, completionHandler: @escaping (Error?) -> Void) {
         reloadCurrentManager { (error) in
@@ -321,7 +323,7 @@ private extension SecureDNSVC{
             }
             ///`isEanble`:Boolean for enable to create VPN
             manager.isEnabled = true
-            self.setsOnDemandVPN(true)
+            // self.setsOnDemandVPN(true)
             manager.saveToPreferences { (error) in
                 if let error = error {
                     print("error saving preferences: \(error)")
@@ -344,11 +346,6 @@ private extension SecureDNSVC{
                 if let m = managers.first(where: {$0.protocolConfiguration?.isKind(of: NETunnelProviderProtocol.self) == true}), let p = m.protocolConfiguration as? NETunnelProviderProtocol, p.providerBundleIdentifier == SecureDNSVC.tunnelIdentifier{
                     self.currentManager = m
                 }
-                //                if (manager == nil) {
-                //                    manager = NETunnelProviderManager()
-                //                }
-                
-                // self.currentManager = manager
                 self.status =  self.currentManager.connection.status
                 completionHandler?(nil)
             }
@@ -359,7 +356,9 @@ private extension SecureDNSVC{
     
     //MARK:- Add Observers
     func addObserver(){
-        
+        NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { noti in
+            self.getPremiumValidity()
+        }
         NotificationCenter.default.addObserver(forName: .NEVPNStatusDidChange, object: nil, queue: .main) { noti in
             self.checkVPNStatus()
             
@@ -372,10 +371,6 @@ private extension SecureDNSVC{
     }
     //MARK:- checkVPNStatus
     func checkVPNStatus(){
-        //        guard let status = currentManager.connection.status else {
-        //            print("VPNStatusDidChange")
-        //            return
-        //        }
         self.status = currentManager.connection.status
         print("VPNStatusDidChange: \(self.status.title)")
         
