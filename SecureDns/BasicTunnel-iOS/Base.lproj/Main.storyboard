@@ -256,10 +256,10 @@
                                 <blurEffect style="regular"/>
                             </visualEffectView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4hE-Dz-IsB" customClass="JKCardView" customModule="ADGAP" customModuleProvider="target">
-                                <rect key="frame" x="20" y="227.66666666666666" width="335" height="356.66666666666674"/>
+                                <rect key="frame" x="20" y="168.33333333333334" width="335" height="475.33333333333326"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="1Vi-kS-Ff2">
-                                        <rect key="frame" x="15" y="15" width="305" height="326.66666666666669"/>
+                                        <rect key="frame" x="15" y="15" width="305" height="445.33333333333331"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="50x-uB-VTE">
                                                 <rect key="frame" x="0.0" y="0.0" width="305" height="54.333333333333336"/>
@@ -285,7 +285,7 @@
                                                         </subviews>
                                                     </stackView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="249" text="ADGAP Subscription" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2T5-Zl-cKO">
-                                                        <rect key="frame" x="0.0" y="34.000000000000028" width="305" height="20.333333333333329"/>
+                                                        <rect key="frame" x="0.0" y="34" width="305" height="20.333333333333329"/>
                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                                         <color key="textColor" name="blueColor3"/>
                                                         <nil key="highlightedColor"/>
@@ -296,7 +296,7 @@
                                                 </subviews>
                                             </stackView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="249" text="Purchase the monthly subscription only for" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tn8-1Z-7g2">
-                                                <rect key="frame" x="0.0" y="69.333333333333343" width="305" height="17"/>
+                                                <rect key="frame" x="0.0" y="69.333333333333314" width="305" height="17"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
@@ -326,8 +326,39 @@
                                                     <action selector="onBuy:" destination="njc-u9-Ndy" eventType="touchUpInside" id="Buy-YO-Hrb"/>
                                                 </connections>
                                             </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="249" text="Already subscibed to the monthly subscription, Please click on here to" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7BC-5z-ykR">
+                                                <rect key="frame" x="0.0" y="171.33333333333334" width="305" height="33.666666666666657"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <nil key="highlightedColor"/>
+                                                <variation key="heightClass=regular-widthClass=regular">
+                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                </variation>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="vcP-Nz-Ewn">
+                                                <rect key="frame" x="0.0" y="219.99999999999997" width="305" height="55.000000000000028"/>
+                                                <color key="backgroundColor" systemColor="systemGreenColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="55" id="J3E-Ns-Edq"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                                                <state key="normal" title="Restore">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                </state>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                        <integer key="value" value="6"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
+                                                <variation key="heightClass=regular-widthClass=regular">
+                                                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
+                                                </variation>
+                                                <connections>
+                                                    <action selector="onRestore:" destination="njc-u9-Ndy" eventType="touchUpInside" id="vH9-30-aUF"/>
+                                                </connections>
+                                            </button>
                                             <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xfl-RD-pUh">
-                                                <rect key="frame" x="0.0" y="171.33333333333331" width="305" height="155.33333333333331"/>
+                                                <rect key="frame" x="0.0" y="290" width="305" height="155.33333333333337"/>
                                                 <string key="text">By Subscribing, you agree to our Terms of Service &amp; Privacy Policy and represent that you are at least 16 years of age.
 
 ADGAP will charge the membership fee to your iTunes account on a recurring basis until you cancel. Payment will continue unless you deactivate at least 24-hours prior to the end of the current cycle. You can cancel auto renew in your iTunes account settings.</string>
@@ -377,6 +408,7 @@ ADGAP will charge the membership fee to your iTunes account on a recurring basis
                     </view>
                     <connections>
                         <outlet property="purchaseBtn" destination="jaa-HY-e5Y" id="MYx-dG-Wr4"/>
+                        <outlet property="restoreBtn" destination="vcP-Nz-Ewn" id="fmu-qq-Ngw"/>
                         <outlet property="termPolicylbl" destination="xfl-RD-pUh" id="cbW-GL-y4T"/>
                     </connections>
                 </viewController>

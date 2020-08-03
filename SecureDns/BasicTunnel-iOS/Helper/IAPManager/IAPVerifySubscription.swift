@@ -12,7 +12,7 @@ import SwiftyStoreKit
 struct IAPVerifySubscription {
     var expiredDate:Date
     var recieptsItems:[IAPReceiptItem] = []
-    var purchaseDetail:IAPPurchaseDetails
+    var purchaseDetail:IAPPurchaseDetails? = nil
     var receiptString:String?
     var product:IAPProduct
     var status:CBSubscription.Status = .notPurchased
@@ -60,7 +60,7 @@ struct IAPVerifySubscription {
         
     }
     var orginalTransactionId:String?{
-        if let originalTransaction =  purchaseDetail.originalTransaction{
+        if let originalTransaction =  purchaseDetail?.originalTransaction{
             return originalTransaction.transactionIdentifier
         }else if let productType = self.productType, let v = self[productType]{
             return v.originalTransactionId

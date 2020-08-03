@@ -96,7 +96,7 @@ class IAPManager : NSObject{
     
     //MARK:- verifyPurchase
     
-    func verifyPurchase(_ isLoader:Bool = true, product: IAPProduct, purchaseDetails:IAPPurchaseDetails,completion:@escaping(Bool)->Void) {
+    func verifyPurchase(_ isLoader:Bool = true, product: IAPProduct, purchaseDetails:IAPPurchaseDetails? = nil,completion:@escaping(Bool)->Void) {
         guard NetworkStatus.shared.isConnected, let productType = product.productType else {return}
         if isLoader {
             NetworkStatus.shared.showHud()

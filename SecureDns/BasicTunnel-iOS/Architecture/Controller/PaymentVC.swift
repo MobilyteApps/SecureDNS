@@ -11,6 +11,7 @@ import UIKit
 class PaymentVC: UIViewController {
     @IBOutlet weak private var termPolicylbl: UILabel!
     @IBOutlet fileprivate var purchaseBtn: UIButton!
+    @IBOutlet fileprivate var restoreBtn: UIButton!
     
     fileprivate var viewModel:CBDSNViewModel{
         return CBDSNViewModel.shared
@@ -60,6 +61,20 @@ class PaymentVC: UIViewController {
         }
         
     }
+    //MARK:- Restore subscription
+    @IBAction func onRestore(_ sender: Any) {
+        viewModel.restore { success in
+            async {
+                if success{
+                    self.dismiss(animated: true) {
+                        self.didRefresh?()
+                    }
+                }
+            }
+            
+        }
+    }
+    //MARK:- Cancel
     @IBAction func onCancel(_ sender: Any) {
         self.dismiss(animated: true) {
             

@@ -78,16 +78,44 @@ class CBDSNViewModel:NSObject{
             let recieptHandler  = { (success:Bool) in
                 async {
                     //NetworkStatus.shared.hideHud()
-                    if success, let p = self.iApManager.verifySubscriptionResult, p.isActive == true{
-                        self.subscribe(product: p, completion: completion)
+                    if success, let p = self.iApManager.verifySubscriptionResult{
+                        if p.isActive == true {
+                            self.subscribe(product: p, completion: completion)
+                        }else{
+                            alertMessage = "Your monthly subscription has expired."
+                        }
+                        
+                    }else{
+                        alertMessage =  "You have not subscribed Monthly subscription yet."
                     }
                 }
             }
             self.verifyReceipt(product: product, purchaseDetails: detail, completion: recieptHandler)
         }
     }
+    //MARL:- Restore Subscription
+    func restore(completion:@escaping(Bool)->Void){
+        guard NetworkStatus.shared.isConnected,let product = self.iapProduct  else{return}
+        let recieptHandler  = { (success:Bool) in
+            async {
+                //NetworkStatus.shared.hideHud()
+                if success, let p = self.iApManager.verifySubscriptionResult{
+                    if p.isActive == true {
+                        self.subscribe(product: p, completion: completion)
+                    }else{
+                        alertMessage = "Your monthly subscription has expired."
+                    }
+                    
+                }else{
+                    alertMessage =  "You have not subscribed Monthly subscription yet."
+                }
+            }
+        }
+        self.verifyReceipt(product: product, purchaseDetails: nil, completion: recieptHandler)
+        
+    }
     //MARK:- verifyReceipt
-    func verifyReceipt(_ isLoader:Bool = true,product:IAPProduct,purchaseDetails:IAPPurchaseDetails,completion:@escaping(Bool)->Void){
+    private func verifyReceipt(_ isLoader:Bool = true,product:IAPProduct,purchaseDetails:IAPPurchaseDetails?,completion:@escaping(Bool)->Void){
         self.iApManager.verifyPurchase(isLoader, product: product, purchaseDetails: purchaseDetails, completion: completion)
         
     }
